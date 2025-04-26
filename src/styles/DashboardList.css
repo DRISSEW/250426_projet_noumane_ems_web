@@ -1,0 +1,107 @@
+/* Variables for theming */
+:root {
+    --bg-main: #ffffff;
+    --bg-card: #ffffff;
+    --text-primary: #2c3e50;
+    --text-secondary: #666666;
+    --text-error: #ff4444;
+    --border-color: #eeeeee;
+    --loading-color: #666666;
+}
+
+[data-theme='dark'] {
+    --bg-main: #121212;
+    --bg-card: #1e1e1e;
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --text-error: #ff6b6b;
+    --border-color: #333333;
+    --loading-color: #cccccc;
+}
+
+/* Base styles */
+.dashboard-list {
+    padding: 24px;
+    margin: 0 auto;
+    background: var(--bg-main);
+}
+
+.dashboard-list-title {
+    font-size: 14px;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 15px;
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Loading state */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    font-size: 15px;
+    color: var(--loading-color);
+}
+
+/* Error state */
+.error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    color: var(--text-error);
+    font-size: 15px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .dashboard-list {
+        padding: 20px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-list-title {
+        font-size: 24px;
+    }
+}
+
+/* Dark theme specific adjustments */
+[data-theme='dark'] .dashboard-list {
+    background: var(--bg-main);
+}
+
+[data-theme='dark'] .dashboard-list-title {
+    color: var(--text-primary);
+    border-bottom-color: var(--border-color);
+}
+
+[data-theme='dark'] .loading {
+    color: var(--loading-color);
+}
+
+[data-theme='dark'] .error {
+    color: var(--text-error);
+}

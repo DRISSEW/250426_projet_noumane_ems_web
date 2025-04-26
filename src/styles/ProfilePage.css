@@ -1,0 +1,101 @@
+/* Base styles */
+.profile-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: var(--bg-primary, #fff);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: var(--text-primary, #333);
+}
+
+.profile-info {
+    margin-bottom: 20px;
+}
+
+.profile-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.profile-label {
+    font-weight: bold;
+    color: var(--text-primary, #333);
+}
+
+.profile-value {
+    color: var(--text-secondary, #555);
+}
+
+.api-keys {
+    margin-top: 20px;
+}
+
+.api-key-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.copy-button,
+.edit-button {
+    padding: 5px 10px;
+    font-size: 12px;
+    color: #fff;
+    background-color: var(--button-primary, #007bff);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.copy-button:hover,
+.edit-button:hover {
+    background-color: var(--button-hover, #0056b3);
+}
+
+/* Back button styles */
+.back-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+.back-icon {
+    width: 24px;
+    height: 24px;
+    fill: var(--text-primary, #333);
+}
+
+.back-button:hover .back-icon {
+    fill: var(--text-hover, #555);
+}
+
+/* Dark mode styles */
+[data-theme='dark'] .profile-container {
+    background-color: var(--bg-primary-dark, #2c2c2c);
+    color: var(--text-primary-dark, #ddd);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme='dark'] .profile-label {
+    color: var(--text-primary-dark, #ddd);
+}
+
+[data-theme='dark'] .profile-value {
+    color: var(--text-secondary-dark, #aaa);
+}
+
+[data-theme='dark'] .copy-button,
+[data-theme='dark'] .edit-button {
+    background-color: var(--button-primary-dark, #444);
+}
+
+[data-theme='dark'] .copy-button:hover,
+[data-theme='dark'] .edit-button:hover {
+    background-color: var(--button-hover-dark, #666);
+}
