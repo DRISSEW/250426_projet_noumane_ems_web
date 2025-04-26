@@ -1,0 +1,114 @@
+.pie-chart-container {
+    width: 300px;
+    height: 300px;
+    padding: 20px;
+    background-color: var(--background-paper);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px var(--shadow-color);
+    margin-left: 20px;
+    border: 1px solid var(--divider);
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.pie-chart-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+/* Chart title styles */
+.pie-chart-title {
+    font-size: var(--font-size-normal);
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Legend styles */
+.pie-chart-legend {
+    margin-top: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--font-size-small);
+    color: var(--text-secondary);
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+}
+
+/* Dark mode specific adjustments */
+[data-theme="dark"] .pie-chart-container {
+    background-color: var(--background-paper);
+    border-color: var(--divider);
+}
+
+[data-theme="dark"] .pie-chart-container canvas {
+    filter: brightness(0.9);
+}
+
+/* Tooltip customization */
+.pie-chart-tooltip {
+    background-color: var(--background-paper) !important;
+    border: 1px solid var(--divider) !important;
+    border-radius: 6px !important;
+    padding: 8px 12px !important;
+    color: var(--text-primary) !important;
+    font-size: var(--font-size-small) !important;
+    box-shadow: 0 4px 6px var(--shadow-color) !important;
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+    .pie-chart-container {
+        width: 250px;
+        height: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .pie-chart-container {
+        width: 100%;
+        max-width: 300px;
+        height: 300px;
+        margin: 20px auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .pie-chart-container {
+        padding: 12px;
+        height: 250px;
+    }
+
+    .pie-chart-title {
+        font-size: var(--font-size-small);
+    }
+
+    .legend-item {
+        font-size: var(--font-size-small);
+    }
+}
+
+/* Animation for theme transition */
+.pie-chart-container, 
+.pie-chart-title, 
+.legend-item {
+    transition: background-color 0.3s ease,
+                color 0.3s ease,
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
+}
