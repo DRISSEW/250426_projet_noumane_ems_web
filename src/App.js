@@ -8,7 +8,6 @@ import RegisterPage from './components/Auth/RegisterPage';
 import DashboardView from './components/Dashboard/DashboardView';
 import InputList from './components/inputs/inputList';
 import ProfilePage from './components/Auth/ProfilePage';
-import EquilibriumDashboard from './components/Chart/EquilibriumDashboard';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -66,7 +65,6 @@ function App() {
               <Route path="dashboard" element={<DashboardList />} />
               <Route path="setup/feeds" element={<FeedsList />} />
               <Route path="dashboard/:type" element={<DashboardView />} />
-              <Route path="dashboard/3_EQUILIBRAGE" element={<EquilibriumDashboard />} />
               <Route path="setup/inputs" element={<InputList />} />
             </Route>
           )}

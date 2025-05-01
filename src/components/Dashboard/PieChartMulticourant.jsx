@@ -4,6 +4,17 @@ import '../../styles/PieChartPuissance.css';
 
 const PieChartMulticourant = () => {
     const [currentValues, setCurrentValues] = useState([0, 0, 0]);
+     const [isDarkMode, setIsDarkMode] = useState(
+        document.documentElement.getAttribute('data-theme') === 'dark'
+    );
+
+    useEffect(() => {
+        const observer = new MutationObserver(() => {
+            setIsDarkMode(document.documentElement.getAttribute('data-theme') === 'dark');
+        });
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+        return () => observer.disconnect();
+    }, []);
 
     useEffect(() => {
         const getLastValues = () => {
@@ -13,39 +24,61 @@ const PieChartMulticourant = () => {
             if (cachedData) {
                 try {
                     const parsedData = JSON.parse(cachedData);
+                    console.log('Raw parsed data:', parsedData);
                     
                     if (parsedData?.datasets && Array.isArray(parsedData.datasets)) {
-                        // Get current data and sort to ensure correct order (I1, I2, I3)
+                        // Filter and sort datasets for I1, I2, I3
                         const currentData = parsedData.datasets
-                            .filter(dataset => dataset.label.includes('i'))
-                            .filter(dataset => !dataset.label.includes('INST'))
-                            .sort((a, b) => a.label.localeCompare(b.label))
-                            .slice(0, 3);
+                            .filter(dataset => {
+                                const label = dataset.label.toLowerCase();
+                                return (label === 'i1' || label === 'i2' || label === 'i3') && 
+                                       !label.includes('inst');
+                            })
+                            .sort((a, b) => {
+                                const order = { 'i1': 0, 'i2': 1, 'i3': 2 };
+                                return order[a.label.toLowerCase()] - order[b.label.toLowerCase()];
+                            });
 
-                        console.log('Filtered currentData:', currentData);
+                        console.log('Filtered and sorted currentData:', currentData);
 
-                        // Extract the last valid value from each dataset
+                        // Extract values for each current
                         const values = currentData.map(dataset => {
-                            // Get the last data point that has a valid value
-                            const validPoint = dataset.data
-                                .slice()
+                            const dataPoints = dataset.data || [];
+                            console.log(`Processing ${dataset.label} with ${dataPoints.length} points`);
+                            
+                            // Find the last valid data point
+                            const validPoint = [...dataPoints]
                                 .reverse()
-                                .find(point => Array.isArray(point) && !isNaN(point[1]));
+                                .find(point => {
+                                    const isValid = Array.isArray(point) && 
+                                                  point.length >= 2 && 
+                                                  !isNaN(point[1]) && 
+                                                  point[1] !== null;
+                                    if (!isValid) {
+                                        console.log(`Invalid point in ${dataset.label}:`, point);
+                                    }
+                                    return isValid;
+                                });
 
-                            console.log(`Last valid point for ${dataset.label}:`, validPoint);
-                            return validPoint ? validPoint[1] : 0;
+                            const value = validPoint ? validPoint[1] : 0;
+                            console.log(`Value for ${dataset.label}:`, value);
+                            return value;
                         });
 
-                        console.log('Extracted values:', values);
+                        console.log('Final values array:', values);
 
-                        // Only update if we have valid values and at least one non-zero value
-                        if (values.length === 3 && values.some(v => v !== 0)) {
+                        // Update state if we have valid values
+                        if (values.length === 3) {
                             setCurrentValues(values);
+                        } else {
+                            console.log('Not updating values - incorrect number of values:', values.length);
                         }
                     }
                 } catch (error) {
-                    console.error('Error parsing multicourant pie chart data:', error);
+                    console.error('Error processing multicourant data:', error);
                 }
+            } else {
+                console.log('No cached data found for key:', cacheKey);
             }
         };
 
@@ -85,7 +118,7 @@ const PieChartMulticourant = () => {
             legend: {
                 position: 'bottom',
                 labels: {
-                    color: document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255, 255, 255, 0.9)' : '#333',
+                    color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : '#333',
                     font: {
                         size: 12,
                         weight: '600'
@@ -98,7 +131,7 @@ const PieChartMulticourant = () => {
             title: {
                 display: true,
                 text: 'Distribution des Courants',
-                color: document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255, 255, 255, 0.9)' : '#333',
+                color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : '#333',
                 font: {
                     size: 16,
                     weight: 'bold',
@@ -107,9 +140,9 @@ const PieChartMulticourant = () => {
                 padding: 20
             },
             tooltip: {
-                backgroundColor: document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(0, 0, 0, 0.8)' : '#fff',
-                titleColor: document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255, 255, 255, 0.9)' : '#333',
-                bodyColor: document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255, 255, 255, 0.9)' : '#666',
+                backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : '#fff',
+                titlecolor: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : '#333',
+                bodyColor: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : '#666',
                 bodyFont: {
                     size: 13
                 },

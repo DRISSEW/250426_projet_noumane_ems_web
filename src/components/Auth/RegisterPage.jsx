@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import '../../styles/LoginPage.css'; // Reuse login styles
+import '../../styles/LoginPage.css';
+import { Visibility, VisibilityOff, Brightness4, Brightness7 } from '@mui/icons-material';
 
 const RegisterPage = ({ isDarkMode, toggleTheme }) => {
     const [formData, setFormData] = useState({
@@ -41,7 +42,7 @@ const RegisterPage = ({ isDarkMode, toggleTheme }) => {
                     <h1>Electric Wave EMS</h1>
                 </div>
                 <button className="theme-toggle" onClick={toggleTheme}>
-                    {isDarkMode ? '🌙' : '☀️'}
+                     {isDarkMode ? <Brightness7 /> : <Brightness4 />}
                 </button>
             </div>
 
@@ -90,7 +91,7 @@ const RegisterPage = ({ isDarkMode, toggleTheme }) => {
                                 className="password-toggle"
                                 onClick={() => setShowPassword(!showPassword)}
                             >
-                                {showPassword ? '🙈' : '👁️'}
+                                {showPassword ? <VisibilityOff /> : <Visibility />}
                             </button>
                         </div>
                     </div>

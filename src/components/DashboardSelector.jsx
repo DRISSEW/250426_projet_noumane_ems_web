@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getDashboardList } from '../services/emonAPI';
-import { multiPuissanceConfig } from './Dashboard/dashboardTypes/multiPuissance';
-import { dashboardConfigs } from './Dashboard/dashboardTypes/multiPuissance'
 
 const DashboardSelector = () => {
   const [dashboards, setDashboards] = useState([]);

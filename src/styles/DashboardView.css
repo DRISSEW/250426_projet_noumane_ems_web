@@ -102,3 +102,31 @@
         padding: 2rem 4rem;
     }
 }
+
+.multigrandeurs-iframe {
+    width: 100% !important;
+    max-width: 900px;
+    min-width: 320px;
+    height: 600px !important; /* or whatever fits your content */
+    margin: 0 auto;
+    display: block;
+    border-radius: 12px;
+    background: var(--background-paper, #fff);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border: 1px solid var(--divider, #e0e0e0);
+    transition: box-shadow 0.2s;
+}
+
+@media (max-width: 1024px) {
+    .multigrandeurs-iframe {
+        height: 400px !important;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .multigrandeurs-iframe {
+        height: 300px !important;
+        max-width: 100%;
+    }
+}

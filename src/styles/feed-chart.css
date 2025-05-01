@@ -169,6 +169,10 @@
   background-color: #ffffff;
 }
 
+.chart-From-Dash{
+  min-height: 240px;
+}
+
 /* Stats styling */
 .chart-stats {
   display: flex;

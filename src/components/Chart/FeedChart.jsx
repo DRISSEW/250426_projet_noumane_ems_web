@@ -9,7 +9,7 @@ import '../../styles/feed-chart.css';
 
 Chart.register(zoomPlugin);
 
-const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true }) => {
+const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFromDashboard=false }) => {
   //console.log('FeedChart received data:', data);
   // console.log(timeRange)
   const chartRef = useRef(null);
@@ -400,8 +400,8 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true }) => {
         maintainAspectRatio: false,
         interaction: { mode: 'nearest', axis: 'x', intersect: false },
         plugins: {
-          legend: { 
-            display: true, 
+          legend: {
+            display: true,
             position: 'top',
             labels: {
               font: {
@@ -424,8 +424,8 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true }) => {
             bodySpacing: 1,
             titleSpacing: 1
           },
-          title: { 
-            display: true, 
+          title: {
+            display: true,
             text: feedName,
             font: {
               size: 9
@@ -482,7 +482,7 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true }) => {
           x: {
             type: 'time',
             time: { unit: timeUnit },
-            ticks: { 
+            ticks: {
               source: 'auto',
               font: {
                 size: 7
@@ -557,7 +557,7 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true }) => {
         </div>
       </div>
       {/* Zone du graphique */}
-      <div className="chart-wrapper">
+      <div className={`chart-wrapper ${isFromDashboard ? 'chart-From-Dash' : ''}`}>
         <canvas ref={chartRef} />
       </div>
       {/* Conditionally render statistics */}

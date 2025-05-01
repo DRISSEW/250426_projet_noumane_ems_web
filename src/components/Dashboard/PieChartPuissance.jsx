@@ -3,7 +3,19 @@ import { Pie } from 'react-chartjs-2';
 import '../../styles/PieChartPuissance.css';
 
 const PieChartPuissance = () => {
+    const [isDarkMode, setIsDarkMode] = useState(
+        document.documentElement.getAttribute('data-theme') === 'dark'
+    );
+
     const [phaseValues, setPhaseValues] = useState([0, 0, 0]);
+
+    useEffect(() => {
+        const observer = new MutationObserver(() => {
+            setIsDarkMode(document.documentElement.getAttribute('data-theme') === 'dark');
+        });
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+        return () => observer.disconnect();
+    }, []);
 
     useEffect(() => {
         const getLastValues = () => {
@@ -67,7 +79,7 @@ const PieChartPuissance = () => {
             legend: {
                 position: 'bottom',
                 labels: {
-                    color: document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255, 255, 255, 0.9)' : '#333',
+                    color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : '#333',
                     font: {
                         size: 12,
                         weight: '600'
@@ -80,7 +92,7 @@ const PieChartPuissance = () => {
             title: {
                 display: true,
                 text: 'Distribution des Puissances',
-                color: document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255, 255, 255, 0.9)' : '#333',
+                color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : '#333',
                 font: {
                     size: 16,
                     weight: 'bold',
@@ -89,9 +101,9 @@ const PieChartPuissance = () => {
                 padding: 20
             },
             tooltip: {
-                backgroundColor: document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(0, 0, 0, 0.8)' : '#fff',
-                titleColor: document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255, 255, 255, 0.9)' : '#333',
-                bodyColor: document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255, 255, 255, 0.9)' : '#666',
+                backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : '#fff',
+                titleColor: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : '#333',
+                bodyColor: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : '#666',
                 bodyFont: {
                     size: 13
                 },

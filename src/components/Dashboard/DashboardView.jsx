@@ -5,6 +5,7 @@ import PieChartPuissance from './PieChartPuissance';
 import { getDashboardTypeData, getFeedData } from '../../services/emonAPI';
 import '../../styles/DashboardView.css'; // Import the CSS file for styling
 import PieChartMulticourant from './PieChartMulticourant';
+import TemperatureDashboard from './TemperatureDashboard';
 
 const DashboardView = () => {
   const { type } = useParams(); // Get the dynamic "type" parameter from the URL
@@ -211,7 +212,7 @@ const DashboardView = () => {
                     src="http://electricwave.ma/energymonitoring/vis/realtime?embed=1&feedid=27&colour=ff8000&initzoom=5&apikey=3ddd9a580253f6c9aab6298f754cf0fd&embed=1"
                     width="160%"
                     height="250"
-                    frameborder="0"
+                    frameBorder="0"
                     scrolling="no"
                     >
                 </iframe>
@@ -219,10 +220,10 @@ const DashboardView = () => {
               <div>
                 <h3>TENSION INST</h3>
                   <iframe
-                    src="http://electricwave.ma/energymonitoring/vis/realtime?embed=1&feedid=27&colour=ff8000&initzoom=5&apikey=3ddd9a580253f6c9aab6298f754cf0fd&embed=1"
+                  src="http://electricwave.ma/energymonitoring/vis/realtime?embed=1&feedid=28&colour=cece00&initzoom=5&apikey=3ddd9a580253f6c9aab6298f754cf0fd&embed=1"
                     width="160%"
                     height="250"
-                    frameborder="0"
+                    frameBorder="0"
                     scrolling="no"
                   >
                   </iframe>
@@ -244,7 +245,6 @@ const DashboardView = () => {
                   </button>
                 ))}
               </div>
-
               <div className="chart-container">
                 <FeedChart
                   data={chartData.datasets.map((d) => ({
@@ -294,15 +294,7 @@ const DashboardView = () => {
           </div>
         )}
         {(type === '4_TEMPERATURE') && (
-          <div className="no-data-message">
-            <svg className="no-data-icon" viewBox="0 0 24 24">
-              <path
-                fill="currentColor"
-                d="M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z"
-              />
-            </svg>
-            <span>No data available for this dashboard</span>
-          </div>
+          <TemperatureDashboard/>
         )}
         {(type === '3_EQUILIBRAGE') && (
            <div className="field-chart-container">
@@ -310,22 +302,23 @@ const DashboardView = () => {
                 src="http://electricwave.ma/energymonitoring/dashboard/view&id=53&apikey=3ddd9a580253f6c9aab6298f754cf0fd&embed=1"
                 width="100%"
                 height="450"
-                frameborder="0"
+                frameBorder="0"
                 scrolling="no"
             >
             </iframe>
           </div>
         )}
-        {(type === '6_MULTIGRANDEURS' && (
-            <iframe
-              src="http://electricwave.ma/energymonitoring/dashboard/view&id=55&apikey=3ddd9a580253f6c9aab6298f754cf0fd&embed=1"
-              width="100%"
-              height="640"
-              frameborder="0"
-              scrolling='nom'
-            >
-            </iframe>
-        ))}
+        {(type === '6_MULTIGRANDEURS') && (
+          <iframe
+            className="multigrandeurs-iframe"
+            src="http://electricwave.ma/energymonitoring/dashboard/view&id=55&apikey=3ddd9a580253f6c9aab6298f754cf0fd&embed=1"
+            width="100%"
+            height="640"
+            frameBorder="0"
+            scrolling="no"
+          >
+          </iframe>
+        )}
         {(type === 'A10_EAU EW') && (
           <div className="water-dashboard-container">
             <div className="chart-container">
@@ -347,12 +340,13 @@ const DashboardView = () => {
                   feedName="Debit Eau"
                   timeRange={timeRange}
                   isTimeRangeAppear={true}
+                  isFromDashboard={true}
                 />
               </div>
             </div>
             <div className="feeds-chart-container-consommation">
               <div className="consumption-chart">
-                <h2 className="consumption-title">debit Inst :</h2>
+                <h2 className="consumption-title">debit Inst </h2>
                 <iframe
                   src="http://electricwave.ma/energymonitoring/vis/realtime?embed=1&feedid=1696&colour=f70808&initzoom=1&apikey=3ddd9a580253f6c9aab6298f754cf0fd"
                   frameBorder="0"
@@ -392,6 +386,7 @@ const DashboardView = () => {
                 feedName="i1"
                 timeRange={timeRange}
                 isTimeRangeAppear={true}
+                isFromDashboard={true}
               />
             </div>
           </div>

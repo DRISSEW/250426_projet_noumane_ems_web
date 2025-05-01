@@ -20,7 +20,7 @@ const FeedsList = () => {
     '1m': 'M',
     'y': 'Y',
   };
-
+  //console.log('Time Range:', timeRange);
   useEffect(() => {
     const fetchFeeds = async () => {
       try {
@@ -70,7 +70,7 @@ const FeedsList = () => {
   const handleFeedClick = async (feed, newTimeRange) => {
     try {
       setChartLoading(true);
-      const data = await getFeedData(feed.id, newTimeRange);
+      const data = await getFeedData(feed.id, newTimeRange || timeRange);
       if (data && Array.isArray(data) && data.length > 0) {
         setSelectedFeed({
           ...feed,
