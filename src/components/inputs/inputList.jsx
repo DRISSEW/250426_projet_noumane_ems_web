@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getInputList } from '../../services/emonAPI';
-import '../../styles/InputList.css'; // Add styles for the input list if needed
+import { ExpandMore, ExpandLess } from '@mui/icons-material';
+import '../../styles/InputList.css';
 
 const InputList = () => {
     const [inputs, setInputs] = useState({});
@@ -64,7 +65,7 @@ const InputList = () => {
                     <div className="node-header" onClick={() => toggleNode(node)}>
                         <span>{node}</span>
                         <button className="toggle-button">
-                            {expandedNodes[node] ? '-' : '+'}
+                            {expandedNodes[node] ? <ExpandLess /> : <ExpandMore />}
                         </button>
                     </div>
                     {expandedNodes[node] && (

@@ -68,13 +68,47 @@
 
 @media (max-width: 600px) {
   .navbar {
-    flex-direction: column;
-    height: auto;
+    flex-direction: row;
+    height: 35px;
     gap: 4px;
-    padding: 4px 4px;
+    padding: 4px 8px;
   }
-  .navbar-title {
-    font-size: 0.95rem;
+  .theme-label {
+    display: none;
+  }
+  .navbar-username {
+    display: none;
+  }
+  .theme-switch {
+    gap: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar {
+    height: 45px;
+    padding: 0 8px;
+  }
+  .select-Dashboard {
+    display: none;
+  }
+  .icon-button{
+    width: 25px;
+  }
+   .theme-label {
+    display: none;
+  }
+  .navbar-username {
+    display: none;
+  }
+  .theme-switch {
+    gap: 0;
+  }
+  .navbar-left {
+    gap: 4px;
+  }
+  .navbar-right {
+    gap: 4px;
   }
 }
 

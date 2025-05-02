@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IconButton } from '@mui/material';
@@ -23,7 +22,9 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
       <div className="navbar-left">
         <img src="/EWlogo.jpg" alt="Logo" className="navbar-logo" />
         <h1 className="navbar-title">Electric Wave EMS</h1>
-        <DashboardSelector />
+        <div className="select-Dashboard">
+           <DashboardSelector />
+        </div>
       </div>
 
       <div className="navbar-right">

@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useRef, useState } from 'react';
 import { Chart } from 'chart.js/auto';
 import zoomPlugin from 'chartjs-plugin-zoom'; // Import the zoom plugin
@@ -9,13 +7,14 @@ import '../../styles/feed-chart.css';
 
 Chart.register(zoomPlugin);
 
-const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFromDashboard=false }) => {
+const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFromDashboard = false }) => {
   //console.log('FeedChart received data:', data);
   // console.log(timeRange)
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
   const [chartType, setChartType] = useState('line');
 
+  console.log(chartType);
   const [isDashboard, setIsDashboard] = useState(false);
 
   const chartTypes = [
@@ -26,20 +25,12 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
       description: 'Ligne simple'
     },
     {
-      id: 'scatter',
-      name: 'Scatter Plot',
-      icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48Y2lyY2xlIGN4PSI1IiBjeT0iNSIgcj0iMiIvPjxjaXJjbGUgY3g9IjE5IiBjeT0iNyIgcj0iMiIvPjxjaXJjbGUgY3g9IjE0IiBjeT0iMTUiIHI9IjIiLz48Y2lyY2xlIGN4PSI5IiBjeT0iMTIiIHI9IjIiLz48Y2lyY2xlIGN4PSI3IiBjeT0iMTkiIHI9IjIiLz48L3N2Zz4=',
-      description: 'Nuage de points'
-    },
-    {
       id: 'bar',
       name: 'Bar Chart',
       icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNNSAyMHYtMTZoM3YxNmgzdjE2aC0zem03IDBoLTN2LTE2aDN2MTZ6Ii8+PC9zdmc+',
       description: 'Barres verticales'
     }
   ];
-
-
 
   const defaultColors = [
     { border: 'rgb(255, 99, 132)', bg: 'rgba(255, 99, 132, 0.1)' },
@@ -48,19 +39,6 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
     { border: 'rgb(153, 102, 255)', bg: 'rgba(153, 102, 255, 0.1)' },
   ];
 
-  const datasets = data.map((d, i) => ({
-    label: d.label || `Dataset ${i + 1}`,
-    data: d.data,
-    borderColor: d.borderColor || defaultColors[i % defaultColors.length].border,
-    backgroundColor: d.backgroundColor || defaultColors[i % defaultColors.length].bg,
-    pointRadius: 0,
-    tension: 0.1,
-    borderWidth: 1.5,
-    fill: false,
-  }));
-
-  //console.log('datasets',datasets)
-  //console.log('Chart Data:', chartData);
 
   const filterDataByTimeRange = (inputData) => {
     //console.log(inputData)
@@ -139,9 +117,7 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
   const handleExportCSV = () => {
     if (!data || data.length === 0) return;
 
-
     let allPoints = [];
-
 
     // If it's One Block (array of datasets)
     if (Array.isArray(data) && typeof data[0] === 'object' && data[0].hasOwnProperty('data')) {
@@ -231,19 +207,12 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
           };
 
           switch (chartType) {
-            case 'scatter':
-              baseConfig = {
-                ...baseConfig,
-                type: 'scatter',
-                pointRadius: 4,
-                pointHoverRadius: 8,
-                showLine: false,
-              };
-              break;
             case 'bar':
               baseConfig = {
                 ...baseConfig,
+                type: 'bar',
                 borderRadius: { topLeft: 8, topRight: 8 },
+                borderWidth:1,
                 borderSkipped: false,
               };
               break;
@@ -309,18 +278,11 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
         };
 
         switch (chartType) {
-          case 'scatter':
-            baseConfig = {
-              ...baseConfig,
-              type: 'scatter',
-              pointRadius: 4,
-              pointHoverRadius: 8,
-              showLine: false,
-            };
-            break;
           case 'bar':
             baseConfig = {
               ...baseConfig,
+              type: 'bar',
+              borderWidth:1,
               borderRadius: { topLeft: 8, topRight: 8 },
               borderSkipped: false,
             };
@@ -329,7 +291,7 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
             break;
         }
 
-        return [baseConfig];
+        return baseConfig;
       })();
 
     const timeUnit = {
@@ -363,7 +325,7 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
           const lastDataPoint = dataset.data[dataset.data.length - 1];
           if (lastDataPoint && lastDataPoint.y !== undefined) {
             const x = chartArea.right - 100; // Adjust position near the right
-            const y = chartArea.top + index * -11; // Offset for each dataset
+            const y = chartArea.top + index * -10; // Offset for each dataset
             ctx.fillText(`${dataset.label}: ${lastDataPoint.y.toFixed(2)}`, x, y);
           }
         });
@@ -551,7 +513,7 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
               title={type.description}
             >
               <img src={type.icon} alt={type.name} className="chart-type-icon" />
-              <span>{type.name}</span>
+              <span className={'chart-type-name'}>{type.name}</span>
             </button>
           ))}
         </div>

@@ -55,7 +55,7 @@ export const getFeedsList = async () => {
     const cachedTTL = localStorage.getItem(cacheTTLKey);
 
     if (cachedData && cachedTTL && Date.now() < parseInt(cachedTTL, 10)) {
-      console.log('Returning cached feeds list');
+      // console.log('Returning cached feeds list');
       return JSON.parse(cachedData);
     }
 
@@ -77,17 +77,17 @@ export const getFeedsList = async () => {
 // fonction pour récupérer les données du graphique
 export const getFeedData = async (feedId, timeRange, intervaldefined, skipmissing) => {
   try {
-    console.log(`Fetching data for feedId: ${feedId}, timeRange: ${timeRange}`);
+    // console.log(`Fetching data for feedId: ${feedId}, timeRange: ${timeRange}`);
     const cacheKey = `feedData_${feedId}_${timeRange}`;
     const cacheTTLKey = `feedDataTTL_${feedId}_${timeRange}`;
-    const cacheTTL = 15 * 60 * 1000; // 15 minutes in milliseconds
+    const cacheTTL = 60 * 60 * 1000; // 15 minutes in milliseconds
 
     // Check if data exists in localStorage and is still valid
     const cachedData = localStorage.getItem(cacheKey);
     const cachedTTL = localStorage.getItem(cacheTTLKey);
 
     if (cachedData && cachedTTL && Date.now() < parseInt(cachedTTL, 10)) {
-      console.log(`Returning cached data for feed ${feedId}`);
+      // console.log(`Returning cached data for feed ${feedId}`);
       return JSON.parse(cachedData);
     }
 
@@ -139,14 +139,14 @@ export const getDashboardTypeData = async (dashboardType, timeRange) => {
   try {
     const cacheKey = `dashboardData_${dashboardType}_${timeRange}`;
     const cacheTTLKey = `dashboardDataTTL_${dashboardType}_${timeRange}`;
-    const cacheTTL = 15 * 60 * 1000; // 15 minutes in milliseconds
+    const cacheTTL = 60 * 60 * 1000;//15 minutes in milliseconds
 
     // Check if data exists in localStorage and is still valid
     const cachedData = localStorage.getItem(cacheKey);
     const cachedTTL = localStorage.getItem(cacheTTLKey);
 
     if (cachedData && cachedTTL && Date.now() < parseInt(cachedTTL, 10)) {
-      console.log(`Returning cached data for dashboard ${dashboardType}`);
+      // console.log(`Returning cached data for dashboard ${dashboardType}`);
       return JSON.parse(cachedData);
     }
 
@@ -219,36 +219,6 @@ export const getDashboardTypeData = async (dashboardType, timeRange) => {
             name: 'i3',
             color: { border: 'rgb(54, 162, 235)', background: 'rgba(54, 162, 235, 0.1)' }
           }
-        ]
-      },
-      '4_TEMPERATURE': {
-        title: 'temperature',
-        feeds: [
-          {
-            id: 149,
-            name: 'i1',
-            color: { border: 'rgb(255, 159, 64)', background: 'rgba(255, 159, 64, 0.1)' }
-          },
-          {
-            id: 150,
-            name: 'i2',
-            color: { border: 'rgb(75, 192, 192)', background: 'rgba(75, 192, 192, 0.1)' }
-          },
-          {
-            id: 151,
-            name: 'i3',
-            color: { border: 'rgb(54, 162, 235)', background: 'rgba(54, 162, 235, 0.1)' }
-          }
-        ]
-      },
-      'A10_EAU EW': {
-        title: 'Eau',
-        feeds: [
-          {
-            id: 54,
-            name: 'EAU EW',
-            color: { border: 'rgb(255, 159, 64)', background: 'rgba(255, 159, 64, 0.1)' }
-          },
         ]
       },
 

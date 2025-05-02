@@ -38,12 +38,9 @@
 .toggle-button {
     background: none;
     border: none;
-    font-size: 12px;
-    font-weight: 500;
     cursor: pointer;
     color: var(--text-primary, #333);
     transition: color 0.3s ease;
-    padding: 2px 6px;
 }
 
 .toggle-button:hover {
@@ -201,6 +198,27 @@
 @media (max-width: 480px) {
     .input-list {
         font-size: 8px;
+    }
+
+    .node-header {
+        font-size: 8px;
+    }
+
+    .input-item {
+        font-size: 8px;
+    }
+
+    .input-table th,
+    .input-table td {
+        font-size: 8px;
+    }
+}
+@media (max-width: 576px) {
+    .input-list {
+        font-size: 8px;
+        left: 20px;
+        position: relative;
+        width: 90%;
     }
 
     .node-header {

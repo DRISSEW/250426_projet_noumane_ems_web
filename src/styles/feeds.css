@@ -138,13 +138,6 @@
   transform: rotate(180deg);
 }
 
-/* Responsive adjustments */
-@media (max-width: 600px) {
-  .feed-item-details {
-    flex-direction: column; 
-    gap: 8px;
-  }
-}
 
 .feeds-layout {
   display: flex;
@@ -390,3 +383,11 @@
 [data-theme="dark"] .chart-wrapper {
   background-color: #1e1e1e;
 }
+
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .feed-item-details {
+      flex-direction: column; 
+      gap: 8px;
+    }
+  }

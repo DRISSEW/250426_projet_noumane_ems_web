@@ -146,3 +146,21 @@
         padding: 6px 12px;
     }
 }
+/* Responsive design */
+@media (max-width: 576px) {
+    .dashboard-card {
+        padding: 16px;
+    }
+
+    .dashboard-name {
+        font-size: 16px;
+    }
+
+    .dashboard-description {
+        font-size: 13px;
+    }
+
+    .view-button {
+        padding: 6px 12px;
+    }
+}

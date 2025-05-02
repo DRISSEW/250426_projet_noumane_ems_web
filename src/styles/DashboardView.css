@@ -130,3 +130,129 @@
         max-width: 100%;
     }
 }
+
+@media (max-width: 576px) {
+    .feeds-chart-container {
+        flex-direction: column;
+        padding: 8px;
+        gap: 12px;
+        width: 100%;
+        margin-left: 8px;
+    }
+
+    .block1 {
+        flex-direction: column;
+        gap: 12px;
+        margin: 0;
+        width: 100%;
+    }
+
+    .chart-multipuissance {
+        width: 105%;
+        padding: 8px;
+    }
+
+    .chart-container {
+        margin: 0;
+        padding: 8px;
+        border-radius: 8px;
+        background: var(--background-paper);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 90%;
+    }
+
+    .block2 {
+        width: 95%;
+        margin-top: 5px;
+    }
+
+    .instantane {
+        flex-direction: column;
+        gap: 12px;
+        margin: 12px 0;
+        align-items: center;
+        width: 100%;
+    }
+
+    .instantane div {
+        width: 100%;
+    }
+
+    .instantane h3 {
+        font-size: 0.9rem;
+        text-align: center;
+        margin-bottom: 8px;
+    }
+
+    .instantane iframe {
+        width: 100% !important;
+        height: 200px;
+        border-radius: 8px;
+    }
+    .feeds-chart-container-consommation {
+        flex-direction: column;
+        padding: 8px;
+        gap: 12px;
+        margin: 0;
+        border-radius: 8px;
+    }
+    .consumption-chart {
+        width: 100%;
+        /* Changed from 50% to 100% for full width on mobile */
+        margin: 0 auto;
+    }
+ .iframe-consommation {
+     width: 95% !important;
+     /* Slightly less than 100% to prevent horizontal scroll */
+     margin: 0 auto;
+ }
+    .block1 {
+        flex-direction: column;
+        gap: 12px;
+        margin: 0;
+        width: 100%;
+    }
+
+    .chart-multipuissance {
+        width: 105%;
+        padding: 8px;
+    }
+
+    .chart-container {
+        margin: 0;
+        padding: 8px;
+        border-radius: 8px;
+        background: var(--background-paper);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 90%;
+    }
+
+    .block2 {
+        width: 95%;
+        margin-top: 5px;
+    }
+
+    .instantane {
+        flex-direction: column;
+        gap: 12px;
+        margin: 12px 0;
+        align-items: center;
+        width: 100%;
+    }
+
+    .instantane div {
+        width: 100%;
+    }
+
+    .instantane h3 {
+        font-size: 0.9rem;
+        text-align: center;
+        margin-bottom: 8px;
+    }
+
+    .instantane iframe {
+        width: 100% !important;
+        height: 200px;
+        border-radius: 8px;
+    }
+}
