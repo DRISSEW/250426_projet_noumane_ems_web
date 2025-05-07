@@ -5,7 +5,6 @@
     align-items: center;
     padding: 8px;
     background: var(--background-paper);
-    border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
     margin-bottom: 6px;
     gap: 20px;
@@ -35,7 +34,6 @@
     /* Space for the search icon */
     font-size: 9px;
     border: 2px solid var(--border-color, #e0e0e0);
-    border-radius: 8px;
     background-color: var(--background-input, #ffffff);
     color: var(--text-primary, #333333);
     transition: all 0.2s ease;
@@ -114,7 +112,6 @@
 /* Feed List Styling */
 .feeds-list {
   background-color: var(--background-paper);
-  border-radius: 12px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   max-height: calc(100vh - 180px);
   overflow-y: auto;
@@ -132,7 +129,6 @@
 
 .feeds-list::-webkit-scrollbar-thumb {
   background-color: var(--scroll-thumb, rgba(0, 0, 0, 0.2));
-  border-radius: 3px;
 }
 
 .feed-node {

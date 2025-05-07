@@ -6,7 +6,6 @@ const WRITE_API_KEY = '02f316fd3b4a3a52a8e3ed7a5d7d9ac2';
 
 const withBaseUrl = (url) => `${BASE_URL}${url}`;
 
-
 //recuperer la liste des tableaux de bord
 export const getDashboardList = async () => {
   try {
@@ -30,25 +29,12 @@ export const getDashboardList = async () => {
   }
 };
 
-//recuperer les donnees d'un tableau de bord
-export const getDashboardData = async (dashboardId) => {
-  try {
-    const targetUrl = `/dashboard/view.json?id=${dashboardId}&apikey=${WRITE_API_KEY}`;
-
-    const response = await axios.get(withBaseUrl(targetUrl));
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching dashboard data:', error);
-    throw error;
-  }
-};
-
 //recuperer la liste des flux
 export const getFeedsList = async () => {
   try {
     const cacheKey = 'feedsList';
     const cacheTTLKey = 'feedsListTTL';
-    const cacheTTL = 60 * 60 * 1000; // 1 hour in milliseconds
+    const cacheTTL = 2 * 60 * 60 * 1000; // 1 hour in milliseconds
 
     // Check if data exists in localStorage and is still valid
     const cachedData = localStorage.getItem(cacheKey);
@@ -80,7 +66,7 @@ export const getFeedData = async (feedId, timeRange, intervaldefined, skipmissin
     // console.log(`Fetching data for feedId: ${feedId}, timeRange: ${timeRange}`);
     const cacheKey = `feedData_${feedId}_${timeRange}`;
     const cacheTTLKey = `feedDataTTL_${feedId}_${timeRange}`;
-    const cacheTTL = 60 * 60 * 1000; // 15 minutes in milliseconds
+    const cacheTTL = 2 * 60 * 60 * 1000; // 15 minutes in milliseconds
 
     // Check if data exists in localStorage and is still valid
     const cachedData = localStorage.getItem(cacheKey);
@@ -97,6 +83,8 @@ export const getFeedData = async (feedId, timeRange, intervaldefined, skipmissin
       '1w': 60 * 60 * 24 * 7 + 900,
       '1m': 60 * 60 * 24 * 30 + 3600,
       'y': 60 * 60 * 24 * 365 + 43200,
+      '5y': 60 * 60 * 24 * 365 * 5 + 86400, // 5 years
+      '10y': 60 * 60 * 24 * 365 * 10 + 86400, // 10 years + 1 day buffer
     };
 
     const intervalMap = {
@@ -104,6 +92,8 @@ export const getFeedData = async (feedId, timeRange, intervaldefined, skipmissin
       '1w': 900,
       '1m': 3600,
       'y': 43200,
+      '5y': 43200 * 5, 
+      '10y': 43200 * 10,
     };
 
     const duration = timeRanges[timeRange] || timeRanges['1m']; // default: 1 week
@@ -139,7 +129,7 @@ export const getDashboardTypeData = async (dashboardType, timeRange) => {
   try {
     const cacheKey = `dashboardData_${dashboardType}_${timeRange}`;
     const cacheTTLKey = `dashboardDataTTL_${dashboardType}_${timeRange}`;
-    const cacheTTL = 60 * 60 * 1000;//15 minutes in milliseconds
+    const cacheTTL = 2 * 60 * 60 * 1000;//15 minutes in milliseconds
 
     // Check if data exists in localStorage and is still valid
     const cachedData = localStorage.getItem(cacheKey);
@@ -158,14 +148,18 @@ export const getDashboardTypeData = async (dashboardType, timeRange) => {
       '24h': 60 * 60 * 24 + 120,        // 1 day + 2 min
       '1w': 60 * 60 * 24 * 7 + 900,     // 7 days + 15 min
       '1m': 60 * 60 * 24 * 30 + 3600,   // 30 days + 1 hour
-      'y': 60 * 60 * 24 * 365 + 43200   // 365 days + 12 hours
+      'y': 60 * 60 * 24 * 365 + 43200,
+      '5y': 60 * 60 * 24 * 365 * 5 + 86400, // 5 years
+      '10y': 60 * 60 * 24 * 365 * 10 + 86400,   // 365 days + 12 hours
     };
 
     const intervalMap = {
       '24h': 120,
       '1w': 900,
       '1m': 3600,
-      'y': 43200
+      'y': 43200,
+      '5y': 43200 * 5, 
+      '10y': 43200 * 10,
     };
 
     const duration = timeRanges[timeRange] || timeRanges['1m'];
@@ -288,45 +282,6 @@ export const getDashboardTypeData = async (dashboardType, timeRange) => {
       title: config.title,
       type: dashboardType,
       datasets: datasets,
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-          mode: 'nearest',
-          axis: 'x',
-          intersect: false
-        },
-        scales: {
-          x: {
-            type: 'time',
-            time: {
-              unit: 'day',
-              displayFormats: {
-                hour: 'HH:mm',
-                day: 'MMM d',
-                week: 'MMM d',
-                month: 'MMM yyyy'
-              }
-            },
-            ticks: {
-              maxTicksLimit: 10,
-              source: 'auto'
-            }
-          },
-          y: {
-            beginAtZero: true,
-            ticks: {
-              maxTicksLimit: 8
-            }
-          }
-        },
-        plugins: {
-          decimation: {
-            enabled: true,
-            algorithm: 'min-max'
-          }
-        }
-      }
     };
 
     // Save data to localStorage with a TTL
@@ -341,64 +296,5 @@ export const getDashboardTypeData = async (dashboardType, timeRange) => {
       datasets: [],
       options: {}
     };
-  }
-};
-
-export const checkAvailableFeeds = async () => {
-  try {
-    const feeds = await getFeedsList();
-    // console.log('Available feeds:', feeds);
-    // This will show you all available feeds and their IDs
-    return feeds;
-  } catch (error) {
-    console.error('Error checking feeds:', error);
-    return [];
-  }
-};
-
-export const getInputList = async () => {
-  try {
-    const targetUrl = `/input/list.json&apikey=${WRITE_API_KEY}`;
-    const response = await fetch(withBaseUrl(targetUrl));
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch input list');
-    }
-
-    const data = await response.json();
-
-    if (!Array.isArray(data)) {
-      console.error('Invalid input list format:', data);
-      return {};
-    }
-
-    // Group inputs by nodeid
-    const groupedInputs = data.reduce((acc, input) => {
-      const node = input.nodeid !== undefined && input.nodeid !== null
-        ? `Node ${input.nodeid}`
-        : 'Node 0'; // Default to "Node 0" if nodeid is missing or invalid
-      if (!acc[node]) {
-        acc[node] = [];
-      }
-      acc[node].push(input);
-      return acc;
-    }, {});
-
-    // Sort nodes numerically (e.g., Node 0, Node 1, Node 2, ...)
-    const sortedNodes = Object.keys(groupedInputs)
-      .sort((a, b) => {
-        const nodeA = parseInt(a.replace('Node ', ''), 10);
-        const nodeB = parseInt(b.replace('Node ', ''), 10);
-        return nodeA - nodeB;
-      })
-      .reduce((sortedAcc, node) => {
-        sortedAcc[node] = groupedInputs[node];
-        return sortedAcc;
-      }, {});
-
-    return sortedNodes;
-  } catch (error) {
-    console.error('Error fetching input list:', error);
-    throw error;
   }
 };

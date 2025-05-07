@@ -1,47 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Chart } from 'chart.js/auto';
-import zoomPlugin from 'chartjs-plugin-zoom'; // Import the zoom plugin
+import zoomPlugin from 'chartjs-plugin-zoom';
 import 'chartjs-adapter-date-fns';
 import { enUS } from 'date-fns/locale';
 import '../../styles/feed-chart.css';
+import { chartTypes } from '../../config/chartTypes.js';
 
 Chart.register(zoomPlugin);
 
 const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFromDashboard = false }) => {
-  //console.log('FeedChart received data:', data);
-  // console.log(timeRange)
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
   const [chartType, setChartType] = useState('line');
-
-  console.log(chartType);
   const [isDashboard, setIsDashboard] = useState(false);
 
-  const chartTypes = [
-    {
-      id: 'line',
-      name: 'Line Chart',
-      icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTYgMTEuNzhsNC4yNC00LjI0IDEuNDEgMS40MUwxNiAxNC42NWwtNC0zLjk5LTQuMjQgNC4yNEw2LjM0IDEzLjQ5IDIuMSAxNy43bC0xLjQxLTEuNDFMNS45MyAxMmw0LjI0IDQuMjQgNC0zLjk5TDE3LjQxIDguMzUgMjEuNjYgNC4xbDEuNDEgMS40MUwxNiAxMS43OHoiLz48L3N2Zz4=',
-      description: 'Ligne simple'
-    },
-    {
-      id: 'bar',
-      name: 'Bar Chart',
-      icon: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNNSAyMHYtMTZoM3YxNmgzdjE2aC0zem03IDBoLTN2LTE2aDN2MTZ6Ii8+PC9zdmc+',
-      description: 'Barres verticales'
-    }
-  ];
-
-  const defaultColors = [
-    { border: 'rgb(255, 99, 132)', bg: 'rgba(255, 99, 132, 0.1)' },
-    { border: 'rgb(54, 162, 235)', bg: 'rgba(54, 162, 235, 0.1)' },
-    { border: 'rgb(75, 192, 192)', bg: 'rgba(75, 192, 192, 0.1)' },
-    { border: 'rgb(153, 102, 255)', bg: 'rgba(153, 102, 255, 0.1)' },
-  ];
-
-
   const filterDataByTimeRange = (inputData) => {
-    //console.log(inputData)
     if (!inputData || inputData.length === 0) return [];
     const now = new Date().getTime();
     const ranges = {
@@ -50,16 +23,13 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
       '1w': now - 604800000,
       '1m': now - 2592000000,
       'y': now - 31536000000,
+      '5y': now - 31536000000 * 5,
+      '10y': now - 315360000000,
     };
-
-    //console.log('Now:', now);
-    //console.log('Ranges:', ranges);
 
     try {
       return inputData.filter(point => {
-        // Add safety check for point structure
         if (Array.isArray(point) && point.length >= 1) {
-          // //console.log(point[0]);
           return point[0] >= ranges[timeRange];
         }
         return false;
@@ -76,10 +46,8 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
     return data.filter((_, index) => index % factor === 0);
   };
 
-  // Gère le changement de type de graphique
   const handleChartTypeChange = (type) => setChartType(type);
 
-  // Calcule les statistiques à partir des données filtrées
   const calculateStats = () => {
     if (!data || data.length === 0) return { average: 'N/A', minimum: 'N/A', maximum: 'N/A', total: 'N/A' };
 
@@ -171,15 +139,10 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
       ? (data.length > 0 && typeof data[0] === 'object' && data[0].hasOwnProperty('label') && data[0].hasOwnProperty('data'))
         ? data.map((d, i) => {
           const validData = Array.isArray(d.data)
-            ? d.data.filter(point =>
-              Array.isArray(point) &&
-              point.length === 2 &&
-              typeof point[0] === 'number' &&
-              typeof point[1] === 'number'
-            )
+            ? d.data.filter(point => Array.isArray(point) && point.length === 2 && typeof point[0] === 'number' && typeof point[1] === 'number')
             : [];
 
-          //console.log('dashboards-Feeds');
+         //console.log('dashboards-Feeds');
           const filteredData = filterDataByTimeRange(validData);
           //console.log(filteredData)
 
@@ -192,7 +155,7 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
 
           //console.log(formattedData)
           if (formattedData.length > 0) setIsDashboard(true);
-          //chart config for dashboards
+          // console.log('chart config for dashboards')
           let baseConfig = {
             label: d.label || `Dataset ${i + 1}`,
             data: formattedData,
@@ -212,7 +175,7 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
                 ...baseConfig,
                 type: 'bar',
                 borderRadius: { topLeft: 8, topRight: 8 },
-                borderWidth:1,
+                borderWidth: 1,
                 borderSkipped: false,
               };
               break;
@@ -222,14 +185,31 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
 
           return baseConfig;
         })
-        //chart config for feeds
-        : (data.every(item => Array.isArray(item) && item.length === 2 && typeof item[0] === 'number' && typeof item[1] === 'number'))
-          ? [{
+        : (() => {
+          // Single unified configuration for single feed
+          const validData = Array.isArray(data)
+            ? data.filter(point =>
+              Array.isArray(point) &&
+              point.length === 2 &&
+              typeof point[0] === 'number' &&
+              typeof point[1] === 'number'
+            )
+            : [];
+
+          console.log('Single Feed chart')
+          const filteredData = filterDataByTimeRange(validData);
+          const downsampledData = downsampleData(filteredData, 1000);
+
+          if (filteredData.length > 0) setIsDashboard(false);
+
+          const formattedData = downsampledData.map(point => ({
+            x: point[0],
+            y: point[1]
+          }));
+
+          return [{
             label: `${feedName}`,
-            data: downsampleData(filterDataByTimeRange(data), 1000).map(point => ({
-              x: point[0],
-              y: point[1],
-            })),
+            data: formattedData,
             borderColor: defaultColors[0].border,
             backgroundColor: defaultColors[0].bg,
             borderWidth: 0.9,
@@ -238,61 +218,9 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
             fill: true,
             pointRadius: 0,
             pointHoverRadius: 3,
-          }]
-          : []
-      : (() => {
-        //console.log('feeds')
-        // 🧠 Fallback for single dataset object (not array)
-        const validData = Array.isArray(data?.data)
-          ? data.data.filter(point =>
-            Array.isArray(point) &&
-            point.length === 2 &&
-            typeof point[0] === 'number' &&
-            typeof point[1] === 'number'
-          )
-          : [];
-
-        //console.log(validData)
-        const filteredData = filterDataByTimeRange(validData);
-
-        const downsampledData = downsampleData(filteredData, 1000);
-        if (filteredData.length > 0) setIsDashboard(false)
-
-        const formattedData = downsampledData.map(point => ({
-          x: point[0],
-          y: point[1]
-        }));
-
-        //console.log(filteredData)
-        let baseConfig = {
-          label: data.label || `${feedName}`,
-          data: formattedData,
-          borderColor: data.borderColor || defaultColors[0].border,
-          backgroundColor: data.backgroundColor || defaultColors[0].bg,
-          borderWidth: 1,
-          spanGaps: true,
-          tension: 0.3,
-          fill: false,
-          pointRadius: 1,
-          pointHoverRadius: 1,
-        };
-
-        switch (chartType) {
-          case 'bar':
-            baseConfig = {
-              ...baseConfig,
-              type: 'bar',
-              borderWidth:1,
-              borderRadius: { topLeft: 8, topRight: 8 },
-              borderSkipped: false,
-            };
-            break;
-          default:
-            break;
-        }
-
-        return baseConfig;
-      })();
+          }];
+        })()
+      : [];
 
     const timeUnit = {
       '1h': 'minute',
@@ -301,6 +229,8 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
       '1m': 'day',
       '2m': 'week',
       'y': 'month',
+      '5y': 'month',
+      '10y': 'year',
     }[timeRange];
 
     // console.log(datasets);

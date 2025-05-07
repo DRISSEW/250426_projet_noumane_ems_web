@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 import '../../styles/PieChartPuissance.css';
+import { parse } from 'date-fns';
 
 const PieChartPuissance = () => {
     const [isDarkMode, setIsDarkMode] = useState(
@@ -17,6 +18,17 @@ const PieChartPuissance = () => {
         return () => observer.disconnect();
     }, []);
 
+    const getLastValidValue = (dataset) => {
+        // Start from the end of the array and find first valid point
+        for (let i = dataset.data.length - 1; i >= 0; i--) {
+            const point = dataset.data[i];
+            if (point && Array.isArray(point) && point[1] !== null) {
+                return point[1];
+            }
+        }
+        return 0; // Return 0 if no valid points found
+    };
+
     useEffect(() => {
         const getLastValues = () => {
             const cacheKey = `dashboardData_1_MULTIPUISSANCES_1m`;
@@ -26,19 +38,13 @@ const PieChartPuissance = () => {
                 try {
                     const parsedData = JSON.parse(cachedData);
 
-                    // Ensure we have datasets and they contain data
                     if (parsedData?.datasets && Array.isArray(parsedData.datasets)) {
-                        // Get only P_PH1, P_PH2, and P_PH3 data
                         const powerData = parsedData.datasets
                             .filter(dataset => dataset.label.startsWith('P_PH'))
                             .slice(0, 3);
 
-                        const values = powerData.map(dataset => {
-                            const lastPoint = dataset.data[dataset.data.length - 1];
-                            return lastPoint && Array.isArray(lastPoint) ? lastPoint[1] : 0;
-                        });
+                        const values = powerData.map(dataset => getLastValidValue(dataset));
 
-                        // Only update if we have valid values
                         if (values.length === 3 && values.some(v => v !== 0)) {
                             setPhaseValues(values);
                         }
@@ -51,6 +57,7 @@ const PieChartPuissance = () => {
 
         getLastValues();
     }, []);
+
 
     const pieData = {
         labels: ['Phase 1', 'Phase 2', 'Phase 3'],
@@ -72,6 +79,7 @@ const PieChartPuissance = () => {
         ],
     };
 
+    console.log(pieData)
     const options = {
         responsive: true,
         maintainAspectRatio: false,
@@ -120,7 +128,6 @@ const PieChartPuissance = () => {
             }
         }
     };
-
     return (
         <div className="pie-chart-container">
             <Pie data={pieData} options={options} />

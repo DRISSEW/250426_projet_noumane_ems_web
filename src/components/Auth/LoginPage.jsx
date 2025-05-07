@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../styles/LoginPage.css';
-import { loginUser, getApiKeys } from '../../services/authService';
+import { loginUser } from '../../services/authService';
 import { Visibility, VisibilityOff, Brightness4, Brightness7 } from '@mui/icons-material';
 
 const LoginPage = ({ isDarkMode, toggleTheme }) => {
@@ -30,15 +30,6 @@ const LoginPage = ({ isDarkMode, toggleTheme }) => {
         localStorage.setItem('username', formData.username);
         localStorage.setItem('sessionId', sessionid);
         window.dispatchEvent(new Event('auth-change'));
-
-        try {
-          const { success: apiSuccess, apikey_read } = await getApiKeys(formData.username, formData.password);
-          if (apiSuccess && apikey_read) {
-            localStorage.setItem('apikey', apikey_read);
-          }
-        } catch (apiErr) {
-          console.warn('Failed to retrieve API keys:', apiErr.message);
-        }
 
         navigate('/dashboard/', { replace: true });
       } else {

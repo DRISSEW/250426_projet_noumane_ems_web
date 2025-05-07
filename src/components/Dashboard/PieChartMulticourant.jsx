@@ -159,7 +159,7 @@ const PieChartMulticourant = () => {
             }
         }
     };
-
+    
     return (
         <div className="pie-chart-container">
             <Pie data={pieData} options={options} />

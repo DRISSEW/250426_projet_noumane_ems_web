@@ -19,6 +19,8 @@ const FeedsList = () => {
     '1w': 'W',
     '1m': 'M',
     'y': 'Y',
+    '5y': '5Y',
+    '10y': '10Y',
   };
   //console.log('Time Range:', timeRange);
   useEffect(() => {

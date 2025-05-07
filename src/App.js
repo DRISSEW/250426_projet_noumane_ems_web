@@ -6,7 +6,6 @@ import DashboardList from './components/Dashboard/DashboardList';
 import LoginPage from './components/Auth/LoginPage';
 import RegisterPage from './components/Auth/RegisterPage';
 import DashboardView from './components/Dashboard/DashboardView';
-import InputList from './components/inputs/inputList';
 import ProfilePage from './components/Auth/ProfilePage';
 
 function App() {
@@ -65,7 +64,6 @@ function App() {
               <Route path="dashboard" element={<DashboardList />} />
               <Route path="setup/feeds" element={<FeedsList />} />
               <Route path="dashboard/:type" element={<DashboardView />} />
-              <Route path="setup/inputs" element={<InputList />} />
             </Route>
           )}
 

@@ -5,7 +5,6 @@
   margin: 0;
   padding: 4px;
   background-color: var(--background-paper);
-  border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   height: auto;
   min-height: 200px;
@@ -46,7 +45,6 @@
   gap: 6px;
   padding: 4px 8px;
   border: none;
-  border-radius: 8px;
   font-size: 8px;
   font-weight: 500;
   width: 35px;
@@ -103,7 +101,6 @@
   gap: 8px;
   padding: 8px 16px;
   border: none;
-  border-radius: 6px;
   background-color: var(--primary-main);
   color: white;
   cursor: pointer;
@@ -156,8 +153,7 @@
   flex: 0 0 auto;
   background-color: var(--background-default);
   padding: 4px 8px;
-  width: 47%;
-  border-radius: 4px;
+  width: 22%;
   text-align: center;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -242,7 +238,6 @@
 .chart-type-dropdown {
   padding: 4px 8px;
   border: 1px solid var(--border-color, #ccc);
-  border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
 }
@@ -259,7 +254,6 @@
   flex-wrap: wrap;
   padding: 4px;
   background-color: var(--background-default);
-  border-radius: 8px;
 }
 
 .chart-type-option {
@@ -268,7 +262,6 @@
   gap: 4px;
   padding: 4px;
   border: 2px solid transparent;
-  border-radius: 6px;
   background-color: var(--background-paper);
   color: var(--text-primary);
   cursor: pointer;
@@ -320,7 +313,6 @@
   flex-wrap: wrap;
   padding: 4px;
   background-color: var(--background-default);
-  border-radius: 8px;
   width: fit-content;
 }
 
@@ -330,7 +322,6 @@
   gap: 8px;
   padding: 3px 4px;
   border: 2px solid transparent;
-  border-radius: 6px;
   background-color: var(--background-paper);
   color: var(--text-primary);
   cursor: pointer;

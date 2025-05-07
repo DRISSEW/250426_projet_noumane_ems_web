@@ -8,11 +8,10 @@ const DashboardSelector = () => {
   const navigate = useNavigate();
 
   const handleDashboardChange = (e) => {
-    const dashboardName = e.target.value; // Get the selected dashboard name
-    navigate(`/dashboard/${dashboardName}`); // Navigate directly using the selected name
+    const dashboardName = e.target.value; 
+    navigate(`/dashboard/${dashboardName}`); 
   };
   
-
   useEffect(() => {
     const fetchDashboards = async () => {
       try {

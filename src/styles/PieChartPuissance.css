@@ -3,7 +3,6 @@
     height: 300px;
     padding: 20px;
     background-color: var(--background-paper);
-    border-radius: 8px;
     box-shadow: 0 2px 4px var(--shadow-color);
     margin-left: 20px;
     border: 1px solid var(--divider);
@@ -47,7 +46,6 @@
 .legend-color {
     width: 12px;
     height: 12px;
-    border-radius: 3px;
 }
 
 /* Dark mode specific adjustments */
@@ -64,7 +62,6 @@
 .pie-chart-tooltip {
     background-color: var(--background-paper) !important;
     border: 1px solid var(--divider) !important;
-    border-radius: 6px !important;
     padding: 8px 12px !important;
     color: var(--text-primary) !important;
     font-size: var(--font-size-small) !important;

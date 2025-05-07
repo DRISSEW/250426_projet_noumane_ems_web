@@ -6,7 +6,6 @@ import {Dashboard as DashboardIcon,
   Event as EventIcon,
   BarChart as VisualizationIcon,
   Email as EmailIcon,
-  Input as InputIcon,
   Storage as FeedsIcon,
   ShowChart as GraphsIcon,
   ExpandLess,
@@ -28,7 +27,6 @@ const Sidebar = () => {
   };
 
   const setupItems = [
-    { text: 'Inputs', icon: <InputIcon />, path: '/setup/inputs' },
     { text: 'Feeds', icon: <FeedsIcon />, path: '/setup/feeds' },
     { text: 'Dashboards', icon: <DashboardIcon />, path: '/dashboard' },
   ];

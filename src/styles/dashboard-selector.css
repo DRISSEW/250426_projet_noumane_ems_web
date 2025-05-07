@@ -11,7 +11,6 @@
   color: var(--text-primary);
   background-color: var(--background-paper);
   border: 1px solid var(--divider);
-  border-radius: 4px;
   cursor: pointer;
   appearance: none;
   /* Light mode arrow */

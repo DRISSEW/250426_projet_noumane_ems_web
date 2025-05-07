@@ -26,7 +26,6 @@
 
 .feeds-list {
   background-color: var(--background-paper);
-  border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
   max-height: calc(100vh - 100px);
   overflow-y: auto;
@@ -154,7 +153,6 @@
 .feeds-chart-area {
   flex: 1;
   background-color: var(--background-paper);
-  border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
   padding: 8px;
   display: flex;
@@ -175,7 +173,6 @@
   flex: 1;
   padding: 20px;
   background-color: var(--background-paper);
-  border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
@@ -206,7 +203,6 @@
   flex: 1;
   background-color: var(--background-default);
   padding: 15px;
-  border-radius: 6px;
   text-align: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
@@ -318,7 +314,6 @@
   gap: 8px;
   padding: 6px 12px;
   border: 2px solid transparent;
-  border-radius: 6px;
   background-color: var(--background-paper);
   color: var(--text-primary);
   cursor: pointer;
@@ -335,7 +330,6 @@
   flex-wrap: wrap;
   padding: 6px;
   background-color: var(--background-default);
-  border-radius: 8px;
 }
 
 /* Navbar styles */

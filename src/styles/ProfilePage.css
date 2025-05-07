@@ -4,7 +4,6 @@
     margin: 12px auto;
     padding: 12px;
     background-color: var(--bg-primary, #fff);
-    border-radius: 6px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     color: var(--text-primary, #333);
 }
@@ -46,7 +45,6 @@
 
 .profile-card {
     background: var(--bg-secondary, #f8f9fa);
-    border-radius: 8px;
     padding: 1rem;
     margin-top: 1rem;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
@@ -116,7 +114,6 @@
     color: #fff;
     background-color: var(--button-primary, #007bff);
     border: none;
-    border-radius: 3px;
     cursor: pointer;
 }
 
