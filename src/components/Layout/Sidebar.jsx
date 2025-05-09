@@ -1,4 +1,5 @@
-import {Dashboard as DashboardIcon,
+import {
+  Dashboard as DashboardIcon,
   Settings as SettingsIcon,
   ExitToApp as LogoutIcon,
   Add as ExtrasIcon,
@@ -20,10 +21,21 @@ const Sidebar = () => {
   const [setupOpen, setSetupOpen] = useState(false);
 
   const handleLogout = () => {
-    // Remove authentication status from localStorage
-    localStorage.removeItem('isAuthenticated');
+    // Clear all localStorage data
+    const keysToKeep = ['theme']; // Add any keys you want to preserve
+
+    // Get all keys from localStorage
+    const keys = Object.keys(localStorage);
+
+    // Remove all items except those in keysToKeep
+    keys.forEach(key => {
+      if (!keysToKeep.includes(key)) {
+        localStorage.removeItem(key);
+      }
+    });
+
     // Redirect to login page
-    window.location.href = '/login'; // Using window.location to force a full page reload
+    window.location.href = '/login';
   };
 
   const setupItems = [
@@ -36,18 +48,18 @@ const Sidebar = () => {
       <div className="sidebar-section">
 
         <div className="sidebar-group">
-            <div className="sidebar-submenu">
-              {setupItems.map((item) => (
-                <button
-                  key={item.text}
-                  className="sidebar-item submenu-item"
-                  onClick={() => navigate(item.path)}
-                >
-                  {item.icon}
-                  <span>{item.text}</span>
-                </button>
-              ))}
-            </div>
+          <div className="sidebar-submenu">
+            {setupItems.map((item) => (
+              <button
+                key={item.text}
+                className="sidebar-item submenu-item"
+                onClick={() => navigate(item.path)}
+              >
+                {item.icon}
+                <span>{item.text}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -61,4 +73,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar; 
+export default Sidebar;

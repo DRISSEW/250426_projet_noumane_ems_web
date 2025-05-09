@@ -35,7 +35,7 @@
 /* Sidebar styles */
 .sidebar {
   position: fixed;
-  top: 38px;
+  top: 46px;
   left: 0;
   width: 120px;
   height: calc(100vh - 40px);

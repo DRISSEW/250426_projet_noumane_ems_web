@@ -20,8 +20,7 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        <img src="/EWlogo.jpg" alt="Logo" className="navbar-logo" />
-        <h1 className="navbar-title">Electric Wave EMS</h1>
+        <img src="/darklogo.png" alt="Logo" className="navbar-logo" />
         <div className="select-Dashboard">
            <DashboardSelector />
         </div>

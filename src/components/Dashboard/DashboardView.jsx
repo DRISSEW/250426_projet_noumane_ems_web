@@ -175,7 +175,7 @@ const DashboardView = () => {
         )}
 
         {/* Conditionally Render TENSION Chart */}
-        {type == '1_MULTIPUISSANCES' && (
+        {type == '1_MULTIPUISSANCES'  && (
           <div className='feeds-chart-container'>
             <div className="chart-container block1">
               <div className="chart-multipuissance">
@@ -267,26 +267,6 @@ const DashboardView = () => {
           </div>
         )}
         {type == '5_CONSOMMATION' && (
-          // <div className="feeds-chart-container-consommation">
-          //   <div className="consumption-chart">
-          //     <h2 className="consumption-title">Consumption (KWH)</h2>
-          //     <iframe
-          //       src="http://electricwave.ma/energymonitoring/vis/bargraph?embed=1&feedid=1246&colour=ff8080&interval=d&units= KWH&dp=&scale=&delta=1&mode=0&initzoom=1&apikey=02f316fd3b4a3a52a8e3ed7a5d7d9ac2"
-          //       frameBorder="0"
-          //       className='iframe-consommation'
-          //       scrolling="no"
-          //     ></iframe>
-          //   </div>
-          //   <div className="consumption-chart">
-          //     <h2 className="consumption-title">Cost (DH)</h2>
-          //     <iframe
-          //       src="http://electricwave.ma/energymonitoring/vis/bargraph?embed=1&feedid=1246&colour=62c400&interval=d&units= DH&dp=&scale=1.7&delta=1&mode=0&initzoom=1&apikey=02f316fd3b4a3a52a8e3ed7a5d7d9ac2"
-          //       frameBorder="0"
-          //       className='iframe-consommation'
-          //       scrolling="no"
-          //     ></iframe>
-          //   </div>
-          // </div>
           <ConsumptionDashboard />
         )}
 
@@ -311,7 +291,7 @@ const DashboardView = () => {
           </>
         )}
         {(type === '6_MULTIGRANDEURS') && (
-          <MultiGrandeurs/>
+          <MultiGrandeurs />
         )}
         {(type === 'A10_EAU EW') && (
           <div className="water-dashboard-container">

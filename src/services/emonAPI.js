@@ -1,15 +1,38 @@
 import axios from 'axios';
 
 const BASE_URL = 'http://electricwave.ma/energymonitoring';
-const API_KEY = '3ddd9a580253f6c9aab6298f754cf0fd';
-const WRITE_API_KEY = '02f316fd3b4a3a52a8e3ed7a5d7d9ac2';
+
+// API key configuration based on username
+const API_KEYS = {
+  ctm01: {
+    API_KEY: '3ddd9a580253f6c9aab6298f754cf0fd',
+    WRITE_API_KEY: '02f316fd3b4a3a52a8e3ed7a5d7d9ac2'
+  },
+  nfis01: {
+    API_KEY: '2c30da3bca4699eb66c1b0d0698e137f1',
+    WRITE_API_KEY: 'faf2d7a337a745078a6e7f74d856fd77'
+  }
+};
+
+// Create a function to get current API keys
+const getCurrentApiKeys = () => {
+  const username = localStorage.getItem('username');
+  return API_KEYS[username] || API_KEYS.ctm01;
+};
+
+// Export getCurrentApiKeys to use in other files if needed
+export { getCurrentApiKeys };
+
+// Use a function to get API keys instead of constants
+const getApiKey = () => getCurrentApiKeys().API_KEY;
+const getWriteApiKey = () => getCurrentApiKeys().WRITE_API_KEY;
 
 const withBaseUrl = (url) => `${BASE_URL}${url}`;
 
 //recuperer la liste des tableaux de bord
 export const getDashboardList = async () => {
   try {
-    const targetUrl = `/dashboard/list.json?apikey=${WRITE_API_KEY}`;
+    const targetUrl = `/dashboard/list.json?apikey=${getWriteApiKey()}`;
 
     const response = await axios.get(withBaseUrl(targetUrl));
 
@@ -46,7 +69,7 @@ export const getFeedsList = async () => {
     }
 
     // Fetch data from the API
-    const targetUrl = `/feed/list.json?apikey=${API_KEY}`;
+    const targetUrl = `/feed/list.json?apikey=${getApiKey()}`;
     const response = await axios.get(withBaseUrl(targetUrl));
 
     // Save data to localStorage with a TTL
@@ -92,7 +115,7 @@ export const getFeedData = async (feedId, timeRange, intervaldefined, skipmissin
       '1w': 900,
       '1m': 3600,
       'y': 43200,
-      '5y': 43200 * 5, 
+      '5y': 43200 * 5,
       '10y': 43200 * 10,
     };
 
@@ -109,7 +132,7 @@ export const getFeedData = async (feedId, timeRange, intervaldefined, skipmissin
       `interval=${interval}&` +
       `skipmissing=${skipmissing || 1}&` +
       `limitinterval=1&` +
-      `apikey=${API_KEY}`;
+      `apikey=${getApiKey()}`;
 
     const response = await axios.get(withBaseUrl(targetUrl));
 
@@ -158,7 +181,7 @@ export const getDashboardTypeData = async (dashboardType, timeRange) => {
       '1w': 900,
       '1m': 3600,
       'y': 43200,
-      '5y': 43200 * 5, 
+      '5y': 43200 * 5,
       '10y': 43200 * 10,
     };
 
@@ -170,7 +193,7 @@ export const getDashboardTypeData = async (dashboardType, timeRange) => {
 
     // Dashboard configurations mapped to API names
     const dashboardConfigs = {
-      '1_MULTIPUISSANCES': {
+      '1_MULTIPUISSANCES' : {
         title: 'Multi-Phase Power Consumption',
         feeds: [
           {
@@ -233,7 +256,7 @@ export const getDashboardTypeData = async (dashboardType, timeRange) => {
         `interval=${interval}&` + // 1-hour intervals
         `skipmissing=0&` +
         `limitinterval=1&` +
-        `apikey=${WRITE_API_KEY}`;
+        `apikey=${getWriteApiKey()}`;
 
       try {
         const response = await axios.get(withBaseUrl(targetUrl));

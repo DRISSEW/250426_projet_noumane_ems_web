@@ -3,7 +3,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 35px;
+  height: 45px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -21,15 +21,8 @@
 }
 
 .navbar-logo {
-  width: 20px;
-  height: 20px;
-}
-
-.navbar-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
+  width: 10em;
+  height: 36px;
 }
 
 .navbar-right {
