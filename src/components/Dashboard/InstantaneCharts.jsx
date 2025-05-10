@@ -1,9 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import { getCurrentApiKeys } from '../../services/emonAPI';
 import '../../styles/InstantaneCharts.css';
 
-// Update CHART_CONFIGS to include y-axis settings
 const CHART_CONFIGS = {
     ctm01: {
         puissanceTotal: {
@@ -69,7 +69,7 @@ const InstantaneCharts = () => {
     const fetchChartData = async (feedId, minutes) => {
         const now = Math.floor(Date.now() / 1000);
         const start = now - (minutes * 60);
-        const interval = Math.max(1, Math.floor((minutes * 60) / 200)); // Max 200 points
+        const interval = Math.max(1, Math.floor((minutes * 60) / 200)); 
 
         try {
             const response = await fetch(
@@ -90,7 +90,6 @@ const InstantaneCharts = () => {
         }
     };
 
-    // Update the updateChartData function
     const updateChartData = async (chartType) => {
         const feedId = config[chartType].feedId;
         const minutes = selectedRanges[chartType];
@@ -109,7 +108,7 @@ const InstantaneCharts = () => {
                 tension: 0.1,
                 pointRadius: 0
             }],
-            yAxisConfig // Store the configuration
+            yAxisConfig 
         };
 
         setChartData(prev => ({
@@ -118,7 +117,6 @@ const InstantaneCharts = () => {
         }));
     };
 
-    // Update calculateYAxisConfig function
     const calculateYAxisConfig = (data, chartType) => {
         if (!data || data.length === 0) {
             return {
@@ -132,7 +130,6 @@ const InstantaneCharts = () => {
         const maxValue = Math.max(...values);
         const configMaxValue = config[chartType].maxValue;
 
-        // For nfis01 puissance totale, use larger step size
         if (username === 'nfis01' && chartType === 'puissanceTotal') {
             const roundedMax = Math.ceil(maxValue / 5000) * 5000;
             const max = Math.min(configMaxValue, Math.max(roundedMax, 5000));
@@ -143,7 +140,6 @@ const InstantaneCharts = () => {
             };
         }
 
-        // For other charts, use standard scaling
         const roundedMax = Math.ceil(maxValue / 100) * 100;
         const max = Math.min(configMaxValue, Math.max(roundedMax, configMaxValue / 2));
         return {
@@ -154,11 +150,9 @@ const InstantaneCharts = () => {
     };
 
     useEffect(() => {
-        // Fetch data immediately when component mounts
         updateChartData('puissanceTotal');
         updateChartData('tension');
 
-        // Set up interval for subsequent updates
         const interval = setInterval(() => {
             updateChartData('puissanceTotal');
             updateChartData('tension');
@@ -219,12 +213,10 @@ const InstantaneCharts = () => {
                             ? 'puissanceTotal'
                             : 'tension';
 
-                        // For NFIS01 puissance totale
                         if (username === 'nfis01' && chartType === 'puissanceTotal') {
                             return value.toFixed(0);
                         }
 
-                        // For tension and CTM01 puissance
                         if (chartType === 'tension') {
                             return value.toFixed(0);
                         } else {

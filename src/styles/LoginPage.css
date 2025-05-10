@@ -51,7 +51,8 @@
 }
 
 .logo {
-  height: 19px;
+  height: 43px;
+  width: 45px;
   width: auto;
 }
 
@@ -227,6 +228,16 @@
   text-decoration: underline;
 }
 
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.login-header .language-selector-container {
+  margin-right: 4px;
+}
+
 @media (max-width: 768px) {
   .login-form-container {
     margin: 2rem auto;
@@ -239,5 +250,9 @@
 
   .logo {
     height: 19px;
+  }
+
+  .header-controls {
+    gap: 4px;
   }
 }

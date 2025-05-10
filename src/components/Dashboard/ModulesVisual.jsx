@@ -9,19 +9,18 @@ const ModulesVisual = () => {
         i3: 0
     });
 
-    const MAX_CURRENT = 15; // Maximum current value in Amperes
+    const MAX_CURRENT = 15;
 
     const fetchCurrentValues = async () => {
         try {
             const apiKey = '3ddd9a580253f6c9aab6298f754cf0fd';
             const baseUrl = 'http://electricwave.ma/energymonitoring/feed/value.json';
 
-            // Fetch all values in parallel with updated IDs
             const [i1refResponse, i1Response, i2Response, i3Response] = await Promise.all([
-                fetch(`${baseUrl}?id=149&apikey=${apiKey}`),   // I1ref
-                fetch(`${baseUrl}?id=498&apikey=${apiKey}`),   // I1_TC1200A
-                fetch(`${baseUrl}?id=500&apikey=${apiKey}`),   // I2_TC1200A
-                fetch(`${baseUrl}?id=501&apikey=${apiKey}`)    // I3_TC1200A
+                fetch(`${baseUrl}?id=149&apikey=${apiKey}`), 
+                fetch(`${baseUrl}?id=498&apikey=${apiKey}`), 
+                fetch(`${baseUrl}?id=500&apikey=${apiKey}`),  
+                fetch(`${baseUrl}?id=501&apikey=${apiKey}`)  
             ]);
 
             const [i1refData, i1Data, i2Data, i3Data] = await Promise.all([
@@ -44,7 +43,7 @@ const ModulesVisual = () => {
     };
 
     useEffect(() => {
-        fetchCurrentValues(); // Immediate fetch
+        fetchCurrentValues();
         const interval = setInterval(fetchCurrentValues, 3000);
         return () => clearInterval(interval);
     }, []);

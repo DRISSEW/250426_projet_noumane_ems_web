@@ -14,23 +14,19 @@ const API_KEYS = {
   }
 };
 
-console.log(localStorage.getItem('username'))
 // Create a function to get current API keys
 const getCurrentApiKeys = () => {
   const username = localStorage.getItem('username');
   return API_KEYS[username] || API_KEYS.ctm01;
 };
 
-// Export getCurrentApiKeys to use in other files if needed
 export { getCurrentApiKeys };
 
-// Use a function to get API keys instead of constants
 const getApiKey = () => getCurrentApiKeys().API_KEY;
 const getWriteApiKey = () => getCurrentApiKeys().WRITE_API_KEY;
 
 const withBaseUrl = (url) => `${BASE_URL}${url}`;
 
-//recuperer la liste des tableaux de bord
 export const getDashboardList = async () => {
   try {
     const targetUrl = `/dashboard/list.json?apikey=${getWriteApiKey()}`;
@@ -53,7 +49,6 @@ export const getDashboardList = async () => {
   }
 };
 
-//recuperer la liste des flux
 export const getFeedsList = async () => {
   try {
     const cacheKey = 'feedsList';
@@ -65,7 +60,6 @@ export const getFeedsList = async () => {
     const cachedTTL = localStorage.getItem(cacheTTLKey);
 
     if (cachedData && cachedTTL && Date.now() < parseInt(cachedTTL, 10)) {
-      // console.log('Returning cached feeds list');
       return JSON.parse(cachedData);
     }
 
@@ -84,31 +78,27 @@ export const getFeedsList = async () => {
   }
 };
 
-// fonction pour récupérer les données du graphique
 export const getFeedData = async (feedId, timeRange, intervaldefined, skipmissing) => {
   try {
-    // console.log(`Fetching data for feedId: ${feedId}, timeRange: ${timeRange}`);
     const cacheKey = `feedData_${feedId}_${timeRange}`;
     const cacheTTLKey = `feedDataTTL_${feedId}_${timeRange}`;
-    const cacheTTL = 2 * 60 * 60 * 1000; // 15 minutes in milliseconds
+    const cacheTTL = 2 * 60 * 60 * 1000; 
 
-    // Check if data exists in localStorage and is still valid
     const cachedData = localStorage.getItem(cacheKey);
     const cachedTTL = localStorage.getItem(cacheTTLKey);
 
     if (cachedData && cachedTTL && Date.now() < parseInt(cachedTTL, 10)) {
-      // console.log(`Returning cached data for feed ${feedId}`);
       return JSON.parse(cachedData);
     }
 
-    const now = Math.floor(Date.now() / 1000); // current time in seconds
+    const now = Math.floor(Date.now() / 1000); 
     const timeRanges = {
       '24h': 60 * 60 * 24 + 120,
       '1w': 60 * 60 * 24 * 7 + 900,
       '1m': 60 * 60 * 24 * 30 + 3600,
       'y': 60 * 60 * 24 * 365 + 43200,
-      '5y': 60 * 60 * 24 * 365 * 5 + 86400, // 5 years
-      '10y': 60 * 60 * 24 * 365 * 10 + 86400, // 10 years + 1 day buffer
+      '5y': 60 * 60 * 24 * 365 * 5 + 86400, 
+      '10y': 60 * 60 * 24 * 365 * 10 + 86400, 
     };
 
     const intervalMap = {
@@ -120,11 +110,11 @@ export const getFeedData = async (feedId, timeRange, intervaldefined, skipmissin
       '10y': 43200 * 10,
     };
 
-    const duration = timeRanges[timeRange] || timeRanges['1m']; // default: 1 week
+    const duration = timeRanges[timeRange] || timeRanges['1m']; 
     const interval = intervaldefined || intervalMap[timeRange] || 3600;
 
-    const end = now * 1000; // in milliseconds
-    const start = (now - duration) * 1000; // also in milliseconds
+    const end = now * 1000; //
+    const start = (now - duration) * 1000; 
 
     const targetUrl = `/feed/data.json?` +
       `id=${feedId}&` +
@@ -137,7 +127,6 @@ export const getFeedData = async (feedId, timeRange, intervaldefined, skipmissin
 
     const response = await axios.get(withBaseUrl(targetUrl));
 
-    // Save data to localStorage with a TTL
     localStorage.setItem(cacheKey, JSON.stringify(response.data));
     localStorage.setItem(cacheTTLKey, (Date.now() + cacheTTL).toString());
 
@@ -148,7 +137,7 @@ export const getFeedData = async (feedId, timeRange, intervaldefined, skipmissin
   }
 };
 
-// Add dashboard type mapping
+
 const DASHBOARD_TYPE_MAPPING = {
   ctm01: {
     multipuissance: '1_MULTIPUISSANCES',
@@ -200,34 +189,13 @@ const FEED_CONFIG = {
   }
 };
 
-// Update helper functions to use new configuration
+
 export const getFeedConfig = (genericName) => {
   const username = localStorage.getItem('username');
   const userConfig = FEED_CONFIG[username] || FEED_CONFIG.ctm01;
   return userConfig.feeds[genericName];
 };
 
-// Add feed name mapping
-const FEED_NAME_MAPPING = {
-  ctm01: {
-    phase1Power: 'P_PH1',
-    phase2Power: 'P_PH2',
-    phase3Power: 'P_PH3',
-    totalPower: 'P_TOTALE',
-    current1: 'i1',
-    current2: 'i2',
-    current3: 'i3'
-  },
-  nfis01: {
-    phase1Power: 'P1',
-    phase2Power: 'P2',
-    phase3Power: 'P3',
-    totalPower: 'PT',
-    current1: 'I1',
-    current2: 'I2',
-    current3: 'I3'
-  }
-};
 
 // Function to get current user's dashboard type
 export const getDashboardType = (genericType) => {
@@ -236,14 +204,8 @@ export const getDashboardType = (genericType) => {
   return userMapping[genericType];
 };
 
-// Function to get current user's feed names
-const getFeedName = (genericName) => {
-  const username = localStorage.getItem('username');
-  const userMapping = FEED_NAME_MAPPING[username] || FEED_NAME_MAPPING.ctm01;
-  return userMapping[genericName];
-};
 
-// Update dashboardConfigs to use dynamic feed names
+
 const getDashboardConfig = () => {
   return {
     [getDashboardType('multipuissance')]: {
@@ -288,33 +250,28 @@ const getDashboardConfig = () => {
   };
 };
 
-// Update getDashboardTypeData to use dynamic configuration
 export const getDashboardTypeData = async (type, timeRange) => {
   try {
     const cacheKey = `dashboardData_${type}_${timeRange}`;
     const cacheTTLKey = `dashboardDataTTL_${type}_${timeRange}`;
     const cacheTTL = 2 * 60 * 60 * 1000;//15 minutes in milliseconds
 
-    // Check if data exists in localStorage and is still valid
     const cachedData = localStorage.getItem(cacheKey);
     const cachedTTL = localStorage.getItem(cacheTTLKey);
 
     if (cachedData && cachedTTL && Date.now() < parseInt(cachedTTL, 10)) {
-      // console.log(`Returning cached data for dashboard ${dashboardType}`);
       return JSON.parse(cachedData);
     }
 
-    // Calculate time range
     const now = Math.floor(Date.now() / 1000);
 
-    // Time duration in seconds for each range
     const timeRanges = {
-      '24h': 60 * 60 * 24 + 120,        // 1 day + 2 min
-      '1w': 60 * 60 * 24 * 7 + 900,     // 7 days + 15 min
-      '1m': 60 * 60 * 24 * 30 + 3600,   // 30 days + 1 hour
+      '24h': 60 * 60 * 24 + 120,       
+      '1w': 60 * 60 * 24 * 7 + 900,     
+      '1m': 60 * 60 * 24 * 30 + 3600,  
       'y': 60 * 60 * 24 * 365 + 43200,
-      '5y': 60 * 60 * 24 * 365 * 5 + 86400, // 5 years
-      '10y': 60 * 60 * 24 * 365 * 10 + 86400,   // 365 days + 12 hours
+      '5y': 60 * 60 * 24 * 365 * 5 + 86400, 
+      '10y': 60 * 60 * 24 * 365 * 10 + 86400,   
     };
 
     const intervalMap = {
@@ -329,23 +286,21 @@ export const getDashboardTypeData = async (type, timeRange) => {
     const duration = timeRanges[timeRange] || timeRanges['1m'];
     const interval = intervalMap[timeRange] || 3600;
 
-    const end = now * 1000; // in milliseconds
-    const start = (now - duration) * 1000; // also in milliseconds
+    const end = now * 1000;
+    const start = (now - duration) * 1000; 
 
-    // Dashboard configurations mapped to API names
     const dashboardConfigs = getDashboardConfig();
     const config = dashboardConfigs[type];
     if (!config) {
       throw new Error(`Unknown dashboard type: ${type}`);
     }
 
-    // Fetch data for all feeds in parallel
     const feedDataPromises = config.feeds.map(async (feed) => {
       const targetUrl = `/feed/data.json?` +
         `id=${feed.id}&` +
         `start=${start}&` +
         `end=${end}&` +
-        `interval=${interval}&` + // 1-hour intervals
+        `interval=${interval}&` + 
         `skipmissing=0&` +
         `limitinterval=1&` +
         `apikey=${getWriteApiKey()}`;
@@ -390,7 +345,6 @@ export const getDashboardTypeData = async (type, timeRange) => {
       }
     });
 
-    // Wait for all data to be fetched
     const datasets = await Promise.all(feedDataPromises);
 
     const dashboardData = {
@@ -399,7 +353,6 @@ export const getDashboardTypeData = async (type, timeRange) => {
       datasets: datasets,
     };
 
-    // Save data to localStorage with a TTL
     localStorage.setItem(cacheKey, JSON.stringify(dashboardData));
     localStorage.setItem(cacheTTLKey, (Date.now() + cacheTTL).toString());
 

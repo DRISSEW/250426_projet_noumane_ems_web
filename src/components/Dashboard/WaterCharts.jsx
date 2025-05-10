@@ -1,27 +1,26 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import { getCurrentApiKeys } from '../../services/emonAPI';
 import '../../styles/WaterCharts.css';
 
-//configuartion des grahes
 const CHART_CONFIGS = {
     debitInst: {
         feedId: 1696,
         color: '#f70808',
         title: 'DEBIT INST',
-        interval: 0  // Set interval to 0 for debit
+        interval: 0  
     },
     volume: {
         feedId: 1719,
         color: '#000000',
         title: 'VOLUME',
         interval: 0,
-        maxValue: 25000,  // Added max value for volume
-        roundTo: 20000    // Added round to value
+        maxValue: 25000,
+        roundTo: 20000 
     }
 };
 
-//configuration des time Ranges
 const TIME_RANGES = {
     both: [
         { label: '1h', value: 60 },
@@ -32,7 +31,6 @@ const TIME_RANGES = {
     ]
 };
 
-//le composant principal
 const WaterCharts = () => {
     const [selectedRanges, setSelectedRanges] = useState({
         debitInst: 15,
@@ -56,7 +54,7 @@ const WaterCharts = () => {
                 `start=${start * 1000}&` +
                 `end=${now * 1000}&` +
                 `interval=${CHART_CONFIGS[chartType].interval}&` +
-                `skipmissing=1&` + // Changed to 1 to skip missing values
+                `skipmissing=1&` + 
                 `limitinterval=1&` +
                 `apikey=${API_KEY}`
             );
@@ -68,24 +66,21 @@ const WaterCharts = () => {
         }
     };
 
-    // Update calculateYAxisConfig function
     const calculateYAxisConfig = (data, chartType, minutes) => {
         if (chartType === 'debitInst') {
             const values = data.map(point => point[1] || 0);
             const maxValue = Math.max(...values);
 
-            // Round up to next 0.1 for cleaner ticks
             const roundedMax = Math.ceil(maxValue * 10) / 10;
 
             return {
                 min: 0,
-                max: Math.max(roundedMax, 0.3), // Ensure minimum max of 0.3
-                step: 0.05 // This will be used to determine which ticks to show
+                max: Math.max(roundedMax, 0.3),
+                step: 0.05 
             };
         }
 
         if (chartType === 'volume') {
-            // Get actual max value from data
             const values = data.map(point => point[1] || 0);
             const maxValue = Math.max(...values);
             const roundedMax = Math.min(25000, Math.ceil(maxValue / 5000) * 5000);
@@ -135,11 +130,9 @@ const WaterCharts = () => {
     };
 
     useEffect(() => {
-        // Fetch data immediately when component mounts
         updateChartData('debitInst');
         updateChartData('volume');
 
-        // Set up interval for subsequent updates
         const interval = setInterval(() => {
             updateChartData('debitInst');
             updateChartData('volume');
@@ -155,7 +148,6 @@ const WaterCharts = () => {
         }));
     };
 
-    // Update the getChartOptions function
     const getChartOptions = (chartType) => ({
         responsive: true,
         maintainAspectRatio: false,
@@ -180,13 +172,13 @@ const WaterCharts = () => {
                     color: 'rgba(0, 0, 0, 0.1)'
                 },
                 ticks: {
-                    count: 7, // Show 7 ticks for better readability
+                    count: 7, 
                     autoSkip: false,
                     callback: function (value) {
                         if (chartType === 'debitInst') {
-                            return value.toFixed(2); // Always show values with 2 decimal places
+                            return value.toFixed(2); 
                         }
-                        return value.toFixed(0); // For volume chart
+                        return value.toFixed(0);
                     }
                 }
             }

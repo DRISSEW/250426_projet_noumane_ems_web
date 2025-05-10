@@ -4,13 +4,15 @@ import { IconButton } from '@mui/material';
 import { Brightness4 as DarkIcon, Brightness7 as LightIcon, Notifications as NotificationsIcon } from '@mui/icons-material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DashboardSelector from '../DashboardSelector';
+import LanguageSelector from '../LanguageSelector';
+import { useTranslation } from 'react-i18next';
 
 const Navbar = ({ toggleTheme, isDarkMode }) => {
   const [username, setUsername] = useState('');
   const navigate = useNavigate();
-  
+  const { t } = useTranslation();
+
   useEffect(() => {
-    // Retrieve the username from localStorage
     const storedUsername = localStorage.getItem('username');
     if (storedUsername) {
       setUsername(storedUsername);
@@ -27,10 +29,11 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
       </div>
 
       <div className="navbar-right">
+        <LanguageSelector />
         <IconButton
           onClick={toggleTheme}
           className="icon-button"
-          title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          title={isDarkMode ? t("switchToLight") : t("switchToDark")}
         >
           {isDarkMode ? <LightIcon className="icon" /> : <DarkIcon className="icon" />}
         </IconButton>
@@ -40,12 +43,12 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
             <input type="checkbox" checked={isDarkMode} onChange={toggleTheme} />
             <span className="slider round"></span>
           </label>
-          <span className="theme-label" style={{ fontWeight: 'bold' }}>{isDarkMode ? "Dark Mode" : "Light Mode"}</span>
+          <span className="theme-label" style={{ fontWeight: 'bold' }}>{isDarkMode ? t("darkMode") : t("lightMode")}</span>
         </div>
 
         <IconButton
           className="icon-button"
-          title="Notifications"
+          title={t("notifications")}
         >
           <NotificationsIcon className="icon" />
         </IconButton>
@@ -55,8 +58,8 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
 
         <IconButton
           className="icon-button"
-          title="Profile"
-          onClick={() => navigate('/profile')} // Navigate to profile page
+          title={t("profile")}
+          onClick={() => navigate('/profile')} 
         >
           <AccountCircleIcon className="icon" />
         </IconButton>

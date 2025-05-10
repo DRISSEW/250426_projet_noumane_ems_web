@@ -4,7 +4,6 @@ import MainLayout from './components/Layout/MainLayout';
 import FeedsList from './components/Feeds/FeedsList';
 import DashboardList from './components/Dashboard/DashboardList';
 import LoginPage from './components/Auth/LoginPage';
-import RegisterPage from './components/Auth/RegisterPage';
 import DashboardView from './components/Dashboard/DashboardView';
 import ProfilePage from './components/Auth/ProfilePage';
 
@@ -45,7 +44,6 @@ function App() {
 
   const updateAuth = (status) => {
     setIsAuthenticated(status);
-    // Dispatch custom event for other components
     window.dispatchEvent(new Event('auth'));
   };
 
@@ -56,7 +54,6 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage isDarkMode={isDarkMode} toggleTheme={toggleTheme} updateAuth={updateAuth} />} />
-          <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <RegisterPage isDarkMode={isDarkMode} toggleTheme={toggleTheme} />} />
           <Route path="/profile" element={isAuthenticated ? <ProfilePage /> : <Navigate to="/login" replace />} />
 
           {isAuthenticated && (

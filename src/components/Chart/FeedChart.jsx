@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from 'react';
 import { Chart } from 'chart.js/auto';
 import zoomPlugin from 'chartjs-plugin-zoom';
@@ -5,6 +6,7 @@ import 'chartjs-adapter-date-fns';
 import { enUS } from 'date-fns/locale';
 import '../../styles/feed-chart.css';
 import { chartTypes } from '../../config/chartTypes.js';
+import { useTranslation } from 'react-i18next';
 
 Chart.register(zoomPlugin);
 
@@ -13,6 +15,7 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
   const chartInstance = useRef(null);
   const [chartType, setChartType] = useState('line');
   const [isDashboard, setIsDashboard] = useState(false);
+  const { t } = useTranslation();
 
   const filterDataByTimeRange = (inputData) => {
     if (!inputData || inputData.length === 0) return [];
@@ -59,16 +62,13 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
 
     let allPoints = [];
 
-    // Check if data is array of datasets with label/data
     if (Array.isArray(data) && typeof data[0] === 'object' && data[0].hasOwnProperty('data')) {
-      // Flatten all dataset arrays into one
       data.forEach(d => {
         if (Array.isArray(d.data)) {
           allPoints.push(...d.data);
         }
       });
     }
-    // Else assume it's just an array of [timestamp, value]
     else if (Array.isArray(data) && Array.isArray(data[0])) {
       allPoints = data;
     }
@@ -76,7 +76,6 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
     const filteredPoints = filterDataByTimeRange(allPoints);
     const allValues = filteredPoints.map(point => point[1]);
 
-    //console.log(allValues)
     if (allValues.length === 0) return { average: 'N/A', minimum: 'N/A', maximum: 'N/A', total: 'N/A' };
 
     const sum = allValues.reduce((acc, val) => acc + val, 0);
@@ -93,14 +92,12 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
 
     let allPoints = [];
 
-    // If it's One Block (array of datasets)
     if (Array.isArray(data) && typeof data[0] === 'object' && data[0].hasOwnProperty('data')) {
       data.forEach(dataset => {
         const points = filterDataByTimeRange(dataset.data || []);
         allPoints.push(...points);
       });
     }
-    // If it's Two Block (array of [timestamp, value])
     else if (Array.isArray(data) && Array.isArray(data[0])) {
       allPoints = filterDataByTimeRange(data);
     }
@@ -131,7 +128,6 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
     if (chartInstance.current) {
       chartInstance.current.destroy();
     }
-    //console.log('data:', data);
 
     const defaultColors = [
       { border: 'rgba(75,192,192,1)', bg: 'rgba(75,192,192,0.2)' },
@@ -148,22 +144,18 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
             ? d.data.filter(point => Array.isArray(point) && point.length === 2 && typeof point[0] === 'number' && typeof point[1] === 'number')
             : [];
 
-          //console.log('dashboards-Feeds');
           const filteredData = filterDataByTimeRange(validData);
-          //console.log(filteredData)
 
           const downsampledData = chartType === 'bar'
-            ? downsampleBarData(filteredData, 70)  // Show fewer points for bar charts
-            : downsampleData(filteredData, 1000);  // Keep existing behavior for other charts
+            ? downsampleBarData(filteredData, 70)  
+            : downsampleData(filteredData, 1000);  
 
           const formattedData = downsampledData.map(point => ({
             x: point[0],
             y: point[1]
           }));
 
-          //console.log(formattedData)
           if (formattedData.length > 0) setIsDashboard(true);
-          // console.log('chart config for dashboards')
           let baseConfig = {
             label: d.label || `Dataset ${i + 1}`,
             data: formattedData,
@@ -185,8 +177,8 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
                 borderRadius: { topLeft: 8, topRight: 8 },
                 borderWidth: 1,
                 borderSkipped: false,
-                barPercentage: 0.8, // Controls width of bars within category
-                categoryPercentage: 0.9, // Controls space between groups
+                barPercentage: 0.8,  
+                categoryPercentage: 0.9, 
               };
               break;
             default:
@@ -196,7 +188,6 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
           return baseConfig;
         })
         : (() => {
-          // Single unified configuration for single feed
           const validData = Array.isArray(data)
             ? data.filter(point =>
               Array.isArray(point) &&
@@ -243,8 +234,6 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
       '10y': 'year',
     }[timeRange];
 
-    // console.log(datasets);
-    // Register the custom plugin globally
     Chart.register({
       id: 'customValueDisplay',
       beforeDraw(chart) {
@@ -256,16 +245,14 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
         ctx.rect(0, 0, chart.width, chart.height);
         ctx.clip();
 
-        // console.log(isDarkMode);
         ctx.font = '10px Arial';
         ctx.fillStyle = 'rgb(126, 125, 125)';
 
         datasets.forEach((dataset, index) => {
-          // Get the last data point
           const lastDataPoint = dataset.data[dataset.data.length - 1];
           if (lastDataPoint && lastDataPoint.y !== undefined) {
-            const x = chartArea.right - 100; // Adjust position near the right
-            const y = chartArea.top + index * -10; // Offset for each dataset
+            const x = chartArea.right - 100; 
+            const y = chartArea.top + index * -10; 
             ctx.fillText(`${dataset.label}: ${lastDataPoint.y.toFixed(2)}`, x, y);
           }
         });
@@ -287,12 +274,11 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
 
       return {
         min: earliestDate,
-        max: Math.min(latestDate, new Date().getTime()) // Use current date if it's less than latest data point
+        max: Math.min(latestDate, new Date().getTime())
       };
     };
 
     const limits = getDataLimits(datasets);
-    //console.log('limits', limits)
 
     chartInstance.current = new Chart(ctx, {
       type: chartType === 'bar' ? 'bar' : 'line',
@@ -435,11 +421,14 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
 
   return (
     <div className="feed-chart-container">
-      {/* En-tête avec contrôles */}
       <div className="chart-header">
         <div className="chart-controls">
           <div className="chart-actions">
-            <button className="action-button export-button" onClick={handleExportCSV} title="Export as CSV">
+            <button
+              className="action-button export-button"
+              onClick={handleExportCSV}
+              title={t('exportCSV')}
+            >
               <svg className="action-button-icon" viewBox="0 0 24 24">
                 <path fill="currentColor" d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
               </svg>
@@ -458,27 +447,25 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
           ))}
         </div>
       </div>
-      {/* Zone du graphique */}
       <div className={`chart-wrapper ${isFromDashboard ? 'chart-From-Dash' : ''}`}>
         <canvas ref={chartRef} />
       </div>
-      {/* Conditionally render statistics */}
       {!isDashboard && isTimeRangeAppear && (
         <div className="chart-stats">
           <div className="stat-block">
-            <div className="stat-label">Average</div>
+            <div className="stat-label">{t('chartStats.average')}</div>
             <div className="stat-value">{stats.average}</div>
           </div>
           <div className="stat-block">
-            <div className="stat-label">Minimum</div>
+            <div className="stat-label">{t('chartStats.minimum')}</div>
             <div className="stat-value">{stats.minimum}</div>
           </div>
           <div className="stat-block">
-            <div className="stat-label">Maximum</div>
+            <div className="stat-label">{t('chartStats.maximum')}</div>
             <div className="stat-value">{stats.maximum}</div>
           </div>
           <div className="stat-block">
-            <div className="stat-label">Total</div>
+            <div className="stat-label">{t('chartStats.total')}</div>
             <div className="stat-value">{stats.total}</div>
           </div>
         </div>

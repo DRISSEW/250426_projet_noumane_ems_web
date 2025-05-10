@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
+import { useTranslation } from 'react-i18next';
 import '../../styles/PieChartPuissance.css';
 import { getDashboardType } from '../../services/emonAPI';
 
@@ -8,6 +9,7 @@ const PieChartMulticourant = () => {
     const [isDarkMode, setIsDarkMode] = useState(
         document.documentElement.getAttribute('data-theme') === 'dark'
     );
+    const { t } = useTranslation();
 
     useEffect(() => {
         const observer = new MutationObserver(() => {
@@ -27,10 +29,8 @@ const PieChartMulticourant = () => {
             if (cachedData) {
                 try {
                     const parsedData = JSON.parse(cachedData);
-                    console.log('Raw parsed data:', parsedData);
 
                     if (parsedData?.datasets && Array.isArray(parsedData.datasets)) {
-                        // Filter and sort datasets based on user account
                         const currentData = parsedData.datasets
                             .filter(dataset => {
                                 const label = dataset.label.toLowerCase();
@@ -38,7 +38,6 @@ const PieChartMulticourant = () => {
                                     return (label === 'i1' || label === 'i2' || label === 'i3') ||
                                         (label === 'i1' || label === 'i2' || label === 'i3');
                                 } else {
-                                    // Default ctm01 behavior
                                     return (label === 'i1' || label === 'i2' || label === 'i3') &&
                                         !label.includes('inst');
                                 }
@@ -50,14 +49,9 @@ const PieChartMulticourant = () => {
                                 return order[a.label.toLowerCase()] - order[b.label.toLowerCase()];
                             });
 
-                        console.log('Filtered and sorted currentData:', currentData);
-
-                        // Extract values for each current
                         const values = currentData.map(dataset => {
                             const dataPoints = dataset.data || [];
-                            console.log(`Processing ${dataset.label} with ${dataPoints.length} points`);
 
-                            // Find the last valid data point
                             const validPoint = [...dataPoints]
                                 .reverse()
                                 .find(point => {
@@ -72,13 +66,9 @@ const PieChartMulticourant = () => {
                                 });
 
                             const value = validPoint ? validPoint[1] : 0;
-                            console.log(`Value for ${dataset.label}:`, value);
                             return value;
                         });
-
-                        console.log('Final values array:', values);
-
-                        // Update state if we have valid values
+                        
                         if (values.length === 3) {
                             setCurrentValues(values);
                         } else {
@@ -93,24 +83,22 @@ const PieChartMulticourant = () => {
             }
         };
 
-        // Initial fetch
         getLastValues();
     }, []);
 
-    // Debug log after state updates
-    useEffect(() => {
-        console.log('Current values updated:', currentValues);
-    }, [currentValues]);
-
     const pieData = {
-        labels: ['Courant 1', 'Courant 2', 'Courant 3'],
+        labels: [
+            t('pieCharts.current.current1'),
+            t('pieCharts.current.current2'),
+            t('pieCharts.current.current3')
+        ],
         datasets: [
             {
                 data: currentValues,
                 backgroundColor: [
-                    'rgba(54, 235, 232, 0.9)',  // Blue
-                    'rgb(239, 99, 129)', // Purple
-                    'rgb(53, 152, 218)',  // Orange
+                    'rgba(54, 235, 232, 0.9)',
+                    'rgb(239, 99, 129)',
+                    'rgb(53, 152, 218)',
                 ],
                 borderColor: [
                     'rgba(54, 162, 235, 1)',
@@ -141,7 +129,7 @@ const PieChartMulticourant = () => {
             },
             title: {
                 display: true,
-                text: 'Distribution des Courants',
+                text: t('pieCharts.current.title'),
                 color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : '#333',
                 font: {
                     size: 16,
@@ -164,7 +152,7 @@ const PieChartMulticourant = () => {
                         const value = context.raw;
                         const total = context.dataset.data.reduce((a, b) => a + b, 0);
                         const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                        return `${context.label}: ${value.toFixed(2)}A (${percentage}%)`;
+                        return `${context.label}: ${value.toFixed(2)}${t('pieCharts.current.unit')} (${percentage}%)`;
                     }
                 }
             }

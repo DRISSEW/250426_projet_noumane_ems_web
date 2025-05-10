@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import GaugeChart from 'react-gauge-chart'; // or your preferred gauge
+import GaugeChart from 'react-gauge-chart';
 import '../../styles/TemperatureDashboard.css';
 
 const batteries = [
@@ -34,7 +34,7 @@ const TemperatureDashboard = () => {
               style={{ width: "80px", height: "60px" }} 
               id={`gauge-${idx}`}
               nrOfLevels={6}
-              percent={bat.voltage / 4.2} // assuming 4.2V max
+              percent={bat.voltage / 4.2} 
               textColor={gaugeTextColor}
               formatTextValue={() => `${bat.voltage}V`}
               arcsLength={[0.5, 0.5]}
@@ -45,7 +45,6 @@ const TemperatureDashboard = () => {
             />
             <div className="thermo-block">
               <div className="thermometer">
-                {/* You can use an SVG thermometer here */}
                 <div className="thermo-scale">
                   {[80, 60, 40, 20, 0].map(t => (
                     <div key={t} className="thermo-tick">{t}°</div>

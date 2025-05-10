@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import '../../styles/LoginPage.css';
 import { loginUser } from '../../services/authService';
 import { Visibility, VisibilityOff, Brightness4, Brightness7 } from '@mui/icons-material';
+import LanguageSelector from '../LanguageSelector';
 
 const LoginPage = ({ isDarkMode, toggleTheme }) => {
   const [formData, setFormData] = useState({ username: '', password: '' });
@@ -10,6 +12,7 @@ const LoginPage = ({ isDarkMode, toggleTheme }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -33,11 +36,11 @@ const LoginPage = ({ isDarkMode, toggleTheme }) => {
 
         navigate('/dashboard/', { replace: true });
       } else {
-        setError(message || 'Invalid credentials');
+        setError(message || t('login.invalidCredentials'));
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError(err.message || 'Failed to connect to the server');
+      setError(err.message || t('login.serverError'));
       setFormData((prev) => ({ ...prev, password: '' }));
     } finally {
       setIsLoading(false);
@@ -48,41 +51,43 @@ const LoginPage = ({ isDarkMode, toggleTheme }) => {
     <div className="login-container">
       <div className="login-header">
         <div className="brand">
-          <img src="/EWlogo.jpg" alt="Electric Wave Logo" className="logo" />
-          <h1>Electric Wave EMS</h1>
+          <img src="/darklogo.png" alt="Electric Wave Logo" className="logo" />
         </div>
-        <button className="theme-toggle" onClick={toggleTheme}>
-          {isDarkMode ? <Brightness7 /> : <Brightness4 />}
-        </button>
+        <div className="header-controls">
+          <LanguageSelector />
+          <button className="theme-toggle" onClick={toggleTheme}>
+            {isDarkMode ? <Brightness7 /> : <Brightness4 />}
+          </button>
+        </div>
       </div>
 
       <div className="login-form-container">
-        <h3>Login</h3>
+        <h3>{t('login.title')}</h3>
         <form onSubmit={handleSubmit} className="login-form">
           {error && <div className="error-message">{error}</div>}
 
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="username">{t('login.username')}</label>
             <input
               id="username"
               type="text"
               value={formData.username}
               onChange={handleChange}
-              placeholder="Enter your username"
+              placeholder={t('login.enterUsername')}
               required
               disabled={isLoading}
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">{t('login.password')}</label>
             <div className="password-input-container">
               <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="Enter your password"
+                placeholder={t('login.enterPassword')}
                 required
                 disabled={isLoading}
               />
@@ -98,15 +103,15 @@ const LoginPage = ({ isDarkMode, toggleTheme }) => {
           </div>
 
           <button type="submit" className="login-button" disabled={isLoading}>
-            {isLoading ? 'Logging in...' : 'Login'}
+            {isLoading ? t('login.loggingIn') : t('login.loginButton')}
           </button>
         </form>
         <div className="register-link">
           <p>
-            Don't have an account?{' '}
-            <Link to="/register" className="register-link-text">
-              Register here
-            </Link>
+            {t('login.noAccount')}{' '}
+            <a href="http://electricwave.ma/energymonitoring/" className="register-link-text">
+              {t('login.registerHere')}
+            </a>
           </p>
         </div>
       </div>

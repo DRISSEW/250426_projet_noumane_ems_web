@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
 import '../../styles/MultiGrandeurs.css';
-import { getCurrentApiKeys, getFeedConfig } from '../../services/emonAPI';
+import { getCurrentApiKeys } from '../../services/emonAPI';
 
 const FEED_IDS = {
     ctm01: {
@@ -41,21 +42,14 @@ const MultiGrandeurs = () => {
             const { API_KEY } = getCurrentApiKeys();
             const baseUrl = 'http://electricwave.ma/energymonitoring/feed/value.json';
 
-            // Build fetch requests based on user's feed IDs
             const fetchRequests = [
-                // Tension
                 fetch(`${baseUrl}?id=${feedIds.tension}&apikey=${API_KEY}`),
-                // Currents
                 ...feedIds.currents.map(id => fetch(`${baseUrl}?id=${id}&apikey=${API_KEY}`)),
-                // Powers
                 ...feedIds.powers.map(id => fetch(`${baseUrl}?id=${id}&apikey=${API_KEY}`)),
-                // Apparent Powers
                 ...feedIds.apparentPowers.map(id => fetch(`${baseUrl}?id=${id}&apikey=${API_KEY}`)),
-                // Power Factors
                 ...feedIds.powerFactors.map(id => fetch(`${baseUrl}?id=${id}&apikey=${API_KEY}`)),
             ];
 
-            // Add temperature fetches only for ctm01
             if (username === 'ctm01') {
                 fetchRequests.push(
                     fetch(`${baseUrl}?id=${feedIds.temp1}&apikey=${API_KEY}`),
@@ -97,13 +91,8 @@ const MultiGrandeurs = () => {
     };
 
     useEffect(() => {
-        // Fetch immediately when component mounts
         fetchValues();
-
-        // Set up interval for subsequent fetches
         const interval = setInterval(fetchValues, 3000);
-
-        // Clean up interval on unmount
         return () => clearInterval(interval);
     }, []);
 

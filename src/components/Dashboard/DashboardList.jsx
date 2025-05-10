@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getDashboardList } from '../../services/emonAPI';
 import DashboardCard from './DashboardCard';
 import '../../styles/DashboardList.css';
@@ -8,6 +9,7 @@ const DashboardList = () => {
   const [dashboards, setDashboards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchDashboards = async () => {
@@ -16,19 +18,19 @@ const DashboardList = () => {
         setDashboards(data);
         setLoading(false);
       } catch (err) {
-        setError('Failed to load dashboards');
+        setError(t('failedLoadDashboards'));
         setLoading(false);
         console.error('Error fetching dashboards:', err);
       }
     };
 
     fetchDashboards();
-  }, []);
+  }, [t]);
 
   if (loading) {
     return (
       <div className="loading">
-        <span>Loading dashboards...</span>
+        <span>{t('loadingDashboards')}</span>
       </div>
     );
   }
@@ -43,7 +45,7 @@ const DashboardList = () => {
 
   return (
     <div className="dashboard-list">
-      <h2 className="dashboard-list-title">Dashboards</h2>
+      <h2 className="dashboard-list-title">{t('dashboards')}</h2>
       <div className="dashboard-grid">
         {dashboards.map(dashboard => (
           <DashboardCard

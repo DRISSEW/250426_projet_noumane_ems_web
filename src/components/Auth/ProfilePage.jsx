@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import '../../styles/ProfilePage.css';
 
 const ProfilePage = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     useEffect(() => {
         const storedUsername = localStorage.getItem('username');
         const storedEmail = localStorage.getItem('email') || 'medchennani@gmail.com';
-        setUsername(storedUsername || 'N/A');
+        setUsername(storedUsername || t('notAvailable'));
         setEmail(storedEmail);
-    }, []);
+    }, [t]);
 
     const getInitials = (name) => {
         return name
@@ -24,7 +26,11 @@ const ProfilePage = () => {
 
     return (
         <div className="profile-container">
-            <button className="back-button" onClick={() => navigate(-1)} title="Go Back">
+            <button
+                className="back-button"
+                onClick={() => navigate(-1)}
+                title={t('goBack')}
+            >
                 <svg viewBox="0 0 24 24" fill="currentColor" className="back-icon">
                     <path d="M10 19l-7-7 7-7v4h8v6h-8v4z" />
                 </svg>
@@ -40,11 +46,11 @@ const ProfilePage = () => {
             </div>
 
             <div className="profile-card">
-                <h3>Personal Information</h3>
+                <h3>{t('personalInformation')}</h3>
                 <div className="profile-info">
                     <div className="profile-item">
                         <div className="profile-field">
-                            <span className="profile-label">Username</span>
+                            <span className="profile-label">{t('username')}</span>
                             <span className="profile-value">{username}</span>
                         </div>
                         <svg className="field-icon" viewBox="0 0 24 24">
@@ -53,7 +59,7 @@ const ProfilePage = () => {
                     </div>
                     <div className="profile-item">
                         <div className="profile-field">
-                            <span className="profile-label">Email</span>
+                            <span className="profile-label">{t('email')}</span>
                             <span className="profile-value">{email}</span>
                         </div>
                         <svg className="field-icon" viewBox="0 0 24 24">

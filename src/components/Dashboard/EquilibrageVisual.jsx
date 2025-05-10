@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import '../../styles/EquilibrageVisual.css';
 import { getCurrentApiKeys, getFeedConfig } from '../../services/emonAPI';
@@ -9,22 +10,18 @@ const EquilibrageVisual = () => {
         i3: 0
     });
 
-    // Define max current values per account
     const MAX_CURRENTS = {
         ctm01: 25,
         nfis01: 1100
     };
 
-    // Get current user's max current value
     const MAX_CURRENT = MAX_CURRENTS[localStorage.getItem('username')] || MAX_CURRENTS.ctm01;
     const username = localStorage.getItem('username');
 
     const formatCurrentValue = (value) => {
         if (username === 'nfis01') {
-            // Round to nearest whole number for nfis01
             return Math.round(parseFloat(value));
         }
-        // Keep 2 decimal places for other accounts
         return parseFloat(value).toFixed(2);
     };
 
@@ -33,12 +30,10 @@ const EquilibrageVisual = () => {
             const { API_KEY } = getCurrentApiKeys();
             const baseUrl = 'http://electricwave.ma/energymonitoring/feed/value.json';
 
-            // Get feed configurations
             const current1Config = getFeedConfig('current1');
             const current2Config = getFeedConfig('current2');
             const current3Config = getFeedConfig('current3');
 
-            // Fetch all values in parallel with dynamic feed IDs
             const [i1Response, i2Response, i3Response] = await Promise.all([
                 fetch(`${baseUrl}?id=${current1Config.id}&apikey=${API_KEY}`),
                 fetch(`${baseUrl}?id=${current2Config.id}&apikey=${API_KEY}`),
@@ -63,15 +58,10 @@ const EquilibrageVisual = () => {
     };
 
     useEffect(() => {
-        // Fetch immediately when component mounts
         fetchCurrentValues();
-
-        // Set up interval for subsequent fetches
         const interval = setInterval(fetchCurrentValues, 2000);
-
-        // Clean up interval on unmount
         return () => clearInterval(interval);
-    }, []); // Empty dependency array ensures this only runs once on mount
+    }, []); 
 
     return (
         <div className="equilibrage-container">

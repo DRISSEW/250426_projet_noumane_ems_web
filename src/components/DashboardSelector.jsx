@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getDashboardList } from '../services/emonAPI';
+import { useTranslation } from 'react-i18next';
 
 const DashboardSelector = () => {
   const [dashboards, setDashboards] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
+  const { t } = useTranslation();
+  
   const handleDashboardChange = (e) => {
     const dashboardName = e.target.value; 
     navigate(`/dashboard/${dashboardName}`); 
@@ -37,7 +39,7 @@ const DashboardSelector = () => {
         defaultValue=""
         disabled={loading}
       >
-        <option value="" disabled>Select Dashboard</option>
+        <option value="" disabled>{t('selectDashboard')}</option>
         {dashboards.map((dashboard) => (
           <option key={dashboard.id} value={dashboard.name}>
             {dashboard.name}

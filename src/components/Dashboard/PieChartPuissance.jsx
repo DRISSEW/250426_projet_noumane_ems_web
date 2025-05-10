@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 import '../../styles/PieChartPuissance.css';
-import { parse } from 'date-fns';
 import { getDashboardType } from '../../services/emonAPI';
+import { useTranslation } from 'react-i18next';
 
 const PieChartPuissance = () => {
     const [isDarkMode, setIsDarkMode] = useState(
@@ -10,6 +10,7 @@ const PieChartPuissance = () => {
     );
 
     const [phaseValues, setPhaseValues] = useState([0, 0, 0]);
+    const { t } = useTranslation();
 
     useEffect(() => {
         const observer = new MutationObserver(() => {
@@ -20,19 +21,17 @@ const PieChartPuissance = () => {
     }, []);
 
     const getLastValidValue = (dataset) => {
-        // Start from the end of the array and find first valid point
         for (let i = dataset.data.length - 1; i >= 0; i--) {
             const point = dataset.data[i];
             if (point && Array.isArray(point) && point[1] !== null) {
                 return point[1];
             }
         }
-        return 0; // Return 0 if no valid points found
+        return 0; 
     };
 
     useEffect(() => {
         const getLastValues = () => {
-            // Get dashboard type based on current user
             const dashboardType = getDashboardType('multipuissance');
             const cacheKey = `dashboardData_${dashboardType}_1m`;
             const cachedData = localStorage.getItem(cacheKey);
@@ -42,11 +41,10 @@ const PieChartPuissance = () => {
                     const parsedData = JSON.parse(cachedData);
 
                     if (parsedData?.datasets && Array.isArray(parsedData.datasets)) {
-                        // Update the filter to work with both naming conventions
                         const powerData = parsedData.datasets
                             .filter(dataset =>
-                                dataset.label.startsWith('P_PH') || // for ctm01
-                                dataset.label.match(/^P[1-3]$/)    // for nfis01
+                                dataset.label.startsWith('P_PH') || 
+                                dataset.label.match(/^P[1-3]$/)   
                             )
                             .slice(0, 3);
 
@@ -67,7 +65,11 @@ const PieChartPuissance = () => {
 
 
     const pieData = {
-        labels: ['Phase 1', 'Phase 2', 'Phase 3'],
+        labels: [
+            t('pieCharts.power.phase1'),
+            t('pieCharts.power.phase2'),
+            t('pieCharts.power.phase3')
+        ],
         datasets: [
             {
                 data: phaseValues,
@@ -86,7 +88,6 @@ const PieChartPuissance = () => {
         ],
     };
 
-    console.log(pieData)
     const options = {
         responsive: true,
         maintainAspectRatio: false,
@@ -106,7 +107,7 @@ const PieChartPuissance = () => {
             },
             title: {
                 display: true,
-                text: 'Distribution des Puissances',
+                text: t('pieCharts.power.title'),
                 color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : '#333',
                 font: {
                     size: 16,
@@ -129,7 +130,7 @@ const PieChartPuissance = () => {
                         const value = context.raw;
                         const total = context.dataset.data.reduce((a, b) => a + b, 0);
                         const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                        return `${context.label}: ${value.toFixed(2)}kW (${percentage}%)`;
+                        return `${context.label}: ${value.toFixed(2)}${t('pieCharts.power.unit')} (${percentage}%)`;
                     }
                 }
             }

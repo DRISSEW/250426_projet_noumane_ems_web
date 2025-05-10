@@ -8,7 +8,6 @@ const MainLayout = ({ isDarkMode, toggleTheme }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const sidebarRef = useRef();
 
-  // Close sidebar on outside click or Escape key
   useEffect(() => {
     if (!sidebarOpen) return;
 
@@ -41,7 +40,6 @@ const MainLayout = ({ isDarkMode, toggleTheme }) => {
           <Sidebar />
         </div>
         <main className="content-area">
-          {/* Hamburger only on mobile */}
           <button
             className="sidebar-toggle"
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -50,7 +48,7 @@ const MainLayout = ({ isDarkMode, toggleTheme }) => {
           >
             <MenuIcon />
           </button>
-          <Outlet /> {/* Your routed pages render right here! */}
+          <Outlet />
         </main>
       </div>
     </div>
