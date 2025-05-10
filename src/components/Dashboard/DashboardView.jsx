@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import FeedChart from '../Chart/FeedChart';
 import PieChartPuissance from './PieChartPuissance';
-import { getDashboardTypeData, getFeedData } from '../../services/emonAPI';
+import { getDashboardTypeData, getFeedData, getDashboardType, getFeedConfig } from '../../services/emonAPI';
 import '../../styles/DashboardView.css'; // Import the CSS file for styling
 import PieChartMulticourant from './PieChartMulticourant';
 import TemperatureDashboard from './TemperatureDashboard';
@@ -10,6 +10,9 @@ import EquilibrageVisual from './EquilibrageVisual';
 import MultiGrandeurs from './MultiGrandeurs';
 import ModulesVisual from './ModulesVisual';
 import ConsumptionDashboard from './ConsumptionDashboard';
+import InstantaneCharts from './InstantaneCharts';
+import WaterCharts from './WaterCharts';
+
 
 const DashboardView = () => {
   const { type } = useParams(); // Get the dynamic "type" parameter from the URL
@@ -58,8 +61,9 @@ const DashboardView = () => {
   const fetchTensionData = async (selectedTimeRange) => {
     try {
       setTensionLoading(true);
-      const data = await getFeedData(28, selectedTimeRange); // Fetch TENSION data using feedId 28
-      setTensionData(data); // Update TENSION chart data
+      const tensionConfig = getFeedConfig('tension');
+      const data = await getFeedData(tensionConfig.id, selectedTimeRange);
+      setTensionData(data);
       setTensionLoading(false);
     } catch (err) {
       setError('Failed to load TENSION data');
@@ -144,38 +148,12 @@ const DashboardView = () => {
   // if (loading || consommationLoading || coutLoading) return <div className="loading">Loading dashboard...</div>;
   if (error) return <div className="error">{error}</div>;
 
+  const username = localStorage.getItem('username');
+
   return (
     <div className="dashboard-view">
       <div className="feeds-chart-area">
-        {type !== '1_MULTIPUISSANCES' && type !== '2_MULTICOURANTS' && type !== '8_CurrentDetection' && type !== '7_14 MODULES' && type !== 'A10_EAU EW' && type !== '6_MULTIGRANDEURS' && type !== '4_TEMPERATURE' && type !== '5_CONSOMMATION' && type !== '9_MULTIDEBIT' && type !== 'no name' && type !== 'grafna' && type !== '3_EQUILIBRAGE' && (
-          <div className="chart-container">
-            <div className="time-range-selector">
-              {Object.entries(timeRanges).map(([value, label]) => (
-                <button
-                  key={value}
-                  className={`time-range-option ${timeRange === value ? 'active' : ''}`}
-                  onClick={() => setTimeRange(value)}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-
-            <div className="chart-container">
-              <FeedChart
-                data={chartData.datasets.map((d) => ({
-                  label: d.label,
-                  data: d.data,
-                }))}
-                feedName={type} // Use the "type" as the feed name
-                timeRange={timeRange} // Pass the selected time range to the chart
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Conditionally Render TENSION Chart */}
-        {type == '1_MULTIPUISSANCES'  && (
+        {type === getDashboardType('multipuissance') && (
           <div className='feeds-chart-container'>
             <div className="chart-container block1">
               <div className="chart-multipuissance">
@@ -213,7 +191,7 @@ const DashboardView = () => {
               />
             </div>
             <div className="instantane">
-              <div>
+              {/* <div>
                 <h3>PUISSANCE TOTALE INST</h3>
                 <iframe
                   src="http://electricwave.ma/energymonitoring/vis/realtime?embed=1&feedid=27&colour=ff8000&initzoom=5&apikey=3ddd9a580253f6c9aab6298f754cf0fd&embed=1"
@@ -234,11 +212,13 @@ const DashboardView = () => {
                   scrolling="no"
                 >
                 </iframe>
-              </div>
+              </div> */}
+              {/* Replace the existing instantane div with: */}
+              <InstantaneCharts />
             </div>
           </div>
         )}
-        {type == '2_MULTICOURANTS' && (
+        {type === getDashboardType('multicourants') && (
           <div className="chart-container block1">
             <div className="chart chart-multipuissance">
               <div className="time-range-selector">
@@ -266,10 +246,9 @@ const DashboardView = () => {
             <PieChartMulticourant />
           </div>
         )}
-        {type == '5_CONSOMMATION' && (
+        {type === getDashboardType('consommation') && (
           <ConsumptionDashboard />
         )}
-
         {(type === '9_MULTIDEBIT' || type === 'no name' || type === 'grafna') && (
           <div className="no-data-message">
             <svg className="no-data-icon" viewBox="0 0 24 24">
@@ -281,16 +260,30 @@ const DashboardView = () => {
             <span>No data available for this dashboard</span>
           </div>
         )}
-        {(type === '4_TEMPERATURE') && (
-          <TemperatureDashboard />
+        {type === getDashboardType('temperature') && (
+          <>
+            {username === 'nfis01' ? (
+              <div className="no-data-message">
+                <svg className="no-data-icon" viewBox="0 0 24 24">
+                  <path
+                    fill="currentColor"
+                    d="M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z"
+                  />
+                </svg>
+                <span>No data available for this dashboard</span>
+              </div>
+            ) : (
+              <TemperatureDashboard />
+            )}
+          </>
         )}
-        {(type === '3_EQUILIBRAGE') && (
+        {type === getDashboardType('equilibrage') && (
           <>
             <h2>Equilibrage</h2>
             <EquilibrageVisual />
           </>
         )}
-        {(type === '6_MULTIGRANDEURS') && (
+        {type === getDashboardType('multigrandeurs') && (
           <MultiGrandeurs />
         )}
         {(type === 'A10_EAU EW') && (
@@ -319,7 +312,7 @@ const DashboardView = () => {
               </div>
             </div>
             <div className="feeds-chart-container-consommation">
-              <div className="consumption-chart">
+              {/* <div className="consumption-chart">
                 <h2 className="consumption-title">debit Inst </h2>
                 <iframe
                   src="http://electricwave.ma/energymonitoring/vis/realtime?embed=1&feedid=1696&colour=f70808&initzoom=1&apikey=3ddd9a580253f6c9aab6298f754cf0fd"
@@ -336,7 +329,8 @@ const DashboardView = () => {
                   className='iframe-consommation'
                   scrolling="no"
                 ></iframe>
-              </div>
+              </div> */}
+              <WaterCharts />
             </div>
           </div>
         )}

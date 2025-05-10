@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/EquilibrageVisual.css';
+import { getCurrentApiKeys, getFeedConfig } from '../../services/emonAPI';
 
 const EquilibrageVisual = () => {
     const [currentValues, setCurrentValues] = useState({
@@ -8,18 +9,40 @@ const EquilibrageVisual = () => {
         i3: 0
     });
 
-    const MAX_CURRENT = 25; // Maximum current value in Amperes
+    // Define max current values per account
+    const MAX_CURRENTS = {
+        ctm01: 25,
+        nfis01: 1100
+    };
+
+    // Get current user's max current value
+    const MAX_CURRENT = MAX_CURRENTS[localStorage.getItem('username')] || MAX_CURRENTS.ctm01;
+    const username = localStorage.getItem('username');
+
+    const formatCurrentValue = (value) => {
+        if (username === 'nfis01') {
+            // Round to nearest whole number for nfis01
+            return Math.round(parseFloat(value));
+        }
+        // Keep 2 decimal places for other accounts
+        return parseFloat(value).toFixed(2);
+    };
 
     const fetchCurrentValues = async () => {
         try {
-            const apiKey = '3ddd9a580253f6c9aab6298f754cf0fd';
+            const { API_KEY } = getCurrentApiKeys();
             const baseUrl = 'http://electricwave.ma/energymonitoring/feed/value.json';
 
-            // Fetch all values in parallel
+            // Get feed configurations
+            const current1Config = getFeedConfig('current1');
+            const current2Config = getFeedConfig('current2');
+            const current3Config = getFeedConfig('current3');
+
+            // Fetch all values in parallel with dynamic feed IDs
             const [i1Response, i2Response, i3Response] = await Promise.all([
-                fetch(`${baseUrl}?id=149&apikey=${apiKey}`),
-                fetch(`${baseUrl}?id=150&apikey=${apiKey}`),
-                fetch(`${baseUrl}?id=151&apikey=${apiKey}`)
+                fetch(`${baseUrl}?id=${current1Config.id}&apikey=${API_KEY}`),
+                fetch(`${baseUrl}?id=${current2Config.id}&apikey=${API_KEY}`),
+                fetch(`${baseUrl}?id=${current3Config.id}&apikey=${API_KEY}`)
             ]);
 
             const [i1Data, i2Data, i3Data] = await Promise.all([
@@ -27,10 +50,11 @@ const EquilibrageVisual = () => {
                 i2Response.json(),
                 i3Response.json()
             ]);
+
             setCurrentValues({
-                i1: parseFloat(i1Data).toFixed(2),
-                i2: parseFloat(i2Data).toFixed(2),
-                i3: parseFloat(i3Data).toFixed(2)
+                i1: formatCurrentValue(i1Data),
+                i2: formatCurrentValue(i2Data),
+                i3: formatCurrentValue(i3Data)
             });
 
         } catch (error) {
@@ -52,42 +76,20 @@ const EquilibrageVisual = () => {
     return (
         <div className="equilibrage-container">
             <div className="current-boxes">
-                <div className="current-box">
-                    <div className="current-label">I1</div>
-                    <div className="current-value">{currentValues.i1}A</div>
-                    <div
-                        className="current-fill"
-                        style={{
-                            height: `${(parseFloat(currentValues.i1) / MAX_CURRENT) * 100}%`,
-                            backgroundColor: parseFloat(currentValues.i1) > (MAX_CURRENT * 0.8) ?
-                                'var(--warning-color)' : 'var(--primary-color)'
-                        }}
-                    />
-                </div>
-                <div className="current-box">
-                    <div className="current-label">I2</div>
-                    <div className="current-value">{currentValues.i2}A</div>
-                    <div
-                        className="current-fill"
-                        style={{
-                            height: `${(parseFloat(currentValues.i2) / MAX_CURRENT) * 100}%`,
-                            backgroundColor: parseFloat(currentValues.i2) > (MAX_CURRENT * 0.8) ?
-                                'var(--warning-color)' : 'var(--primary-color)'
-                        }}
-                    />
-                </div>
-                <div className="current-box">
-                    <div className="current-label">I3</div>
-                    <div className="current-value">{currentValues.i3}A</div>
-                    <div
-                        className="current-fill"
-                        style={{
-                            height: `${(parseFloat(currentValues.i3) / MAX_CURRENT) * 100}%`,
-                            backgroundColor: parseFloat(currentValues.i3) > (MAX_CURRENT * 0.8) ?
-                                'var(--warning-color)' : 'var(--primary-color)'
-                        }}
-                    />
-                </div>
+                {['i1', 'i2', 'i3'].map((current, index) => (
+                    <div key={current} className="current-box">
+                        <div className="current-label">I{index + 1}</div>
+                        <div className="current-value">{currentValues[current]}A</div>
+                        <div
+                            className="current-fill"
+                            style={{
+                                height: `${(parseFloat(currentValues[current]) / MAX_CURRENT) * 100}%`,
+                                backgroundColor: parseFloat(currentValues[current]) > (MAX_CURRENT * 0.8) ?
+                                    'var(--warning-color)' : 'var(--primary-color)'
+                            }}
+                        />
+                    </div>
+                ))}
             </div>
         </div>
     );

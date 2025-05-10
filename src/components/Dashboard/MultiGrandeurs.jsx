@@ -1,6 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
 import '../../styles/MultiGrandeurs.css';
+import { getCurrentApiKeys, getFeedConfig } from '../../services/emonAPI';
+
+const FEED_IDS = {
+    ctm01: {
+        tension: 28,
+        currents: [149, 150, 151],
+        powers: [24, 25, 26],
+        apparentPowers: [156, 157, 158],
+        powerFactors: [153, 154, 155],
+        temp1: 318,
+        temp2: 319
+    },
+    nfis01: {
+        tension: 1240,
+        currents: [1241, 1242, 1243],
+        powers: [1235, 1236, 1237],
+        apparentPowers: [1255, 1256, 1257],
+        powerFactors: [1252, 1253, 1254]
+    }
+};
 
 const MultiGrandeurs = () => {
     const [values, setValues] = useState({
@@ -8,74 +28,68 @@ const MultiGrandeurs = () => {
         currents: [0, 0, 0],
         powers: [0, 0, 0],
         apparentPowers: [0, 0, 0],
-        powerFactors: [0.67, 0.78, -0.04], // Static values
+        powerFactors: [0, 0, 0],
         temp1: 0,
         temp2: 0
     });
 
+    const username = localStorage.getItem('username') || 'ctm01';
+    const feedIds = FEED_IDS[username];
+
     const fetchValues = async () => {
         try {
-            const apiKey = '3ddd9a580253f6c9aab6298f754cf0fd';
+            const { API_KEY } = getCurrentApiKeys();
             const baseUrl = 'http://electricwave.ma/energymonitoring/feed/value.json';
 
-            const responses = await Promise.all([
-                // Tension simple
-                fetch(`${baseUrl}?id=28&apikey=${apiKey}`),
-                // Courants
-                fetch(`${baseUrl}?id=149&apikey=${apiKey}`),
-                fetch(`${baseUrl}?id=150&apikey=${apiKey}`),
-                fetch(`${baseUrl}?id=151&apikey=${apiKey}`),
-                // Puissances
-                fetch(`${baseUrl}?id=24&apikey=${apiKey}`),
-                fetch(`${baseUrl}?id=25&apikey=${apiKey}`),
-                fetch(`${baseUrl}?id=26&apikey=${apiKey}`),
+            // Build fetch requests based on user's feed IDs
+            const fetchRequests = [
+                // Tension
+                fetch(`${baseUrl}?id=${feedIds.tension}&apikey=${API_KEY}`),
+                // Currents
+                ...feedIds.currents.map(id => fetch(`${baseUrl}?id=${id}&apikey=${API_KEY}`)),
+                // Powers
+                ...feedIds.powers.map(id => fetch(`${baseUrl}?id=${id}&apikey=${API_KEY}`)),
                 // Apparent Powers
-                fetch(`${baseUrl}?id=156&apikey=${apiKey}`),
-                fetch(`${baseUrl}?id=157&apikey=${apiKey}`),
-                fetch(`${baseUrl}?id=158&apikey=${apiKey}`),
-                // Temperature
-                fetch(`${baseUrl}?id=318&apikey=${apiKey}`)
-            ]);
+                ...feedIds.apparentPowers.map(id => fetch(`${baseUrl}?id=${id}&apikey=${API_KEY}`)),
+                // Power Factors
+                ...feedIds.powerFactors.map(id => fetch(`${baseUrl}?id=${id}&apikey=${API_KEY}`)),
+            ];
 
-            const [
-                tensionData,
-                current1Data,
-                current2Data,
-                current3Data,
-                power1Data,
-                power2Data,
-                power3Data,
-                apparent1Data,
-                apparent2Data,
-                apparent3Data,
-                temp1Data
-            ] = await Promise.all(responses.map(r => r.json()));
+            // Add temperature fetches only for ctm01
+            if (username === 'ctm01') {
+                fetchRequests.push(
+                    fetch(`${baseUrl}?id=${feedIds.temp1}&apikey=${API_KEY}`),
+                );
+            }
 
-            // Calculate power factors (P/S)
-            const powerFactor1 = (parseFloat(power1Data) / parseFloat(apparent1Data)).toFixed(2);
-            const powerFactor2 = (parseFloat(power2Data) / parseFloat(apparent2Data)).toFixed(2);
-            const powerFactor3 = (parseFloat(power3Data) / parseFloat(apparent3Data)).toFixed(2);
+            const responses = await Promise.all(fetchRequests);
+            const data = await Promise.all(responses.map(r => r.json()));
 
+            let index = 0;
             setValues({
-                tension: parseFloat(tensionData).toFixed(0),
+                tension: parseFloat(data[index++]).toFixed(0),
                 currents: [
-                    parseFloat(current1Data).toFixed(2),
-                    parseFloat(current2Data).toFixed(2),
-                    parseFloat(current3Data).toFixed(2)
+                    parseFloat(data[index++]).toFixed(2),
+                    parseFloat(data[index++]).toFixed(2),
+                    parseFloat(data[index++]).toFixed(2)
                 ],
                 powers: [
-                    parseFloat(power1Data).toFixed(0),
-                    parseFloat(power2Data).toFixed(0),
-                    parseFloat(power3Data).toFixed(0)
+                    parseFloat(data[index++]).toFixed(0),
+                    parseFloat(data[index++]).toFixed(0),
+                    parseFloat(data[index++]).toFixed(0)
                 ],
                 apparentPowers: [
-                    parseFloat(apparent1Data).toFixed(0),
-                    parseFloat(apparent2Data).toFixed(0),
-                    parseFloat(apparent3Data).toFixed(0)
+                    parseFloat(data[index++]).toFixed(0),
+                    parseFloat(data[index++]).toFixed(0),
+                    parseFloat(data[index++]).toFixed(0)
                 ],
-                powerFactors: [powerFactor1, powerFactor2, powerFactor3],
-                temp1: parseFloat(temp1Data).toFixed(1),
-                temp2: '0.0'
+                powerFactors: [
+                    parseFloat(data[index++]).toFixed(2),
+                    parseFloat(data[index++]).toFixed(2),
+                    parseFloat(data[index++]).toFixed(2)
+                ],
+                temp1: username === 'ctm01' ? parseFloat(data[index++]).toFixed(1) : null,
+                temp2: username === 'ctm01' ? parseFloat(data[index++]).toFixed(1) : null
             });
         } catch (error) {
             console.error('Error fetching values:', error);
@@ -144,15 +158,23 @@ const MultiGrandeurs = () => {
                 </div>
             </div>
 
-            <div className="data-row">
-                <span className="data-label">TEMP LOCAL1</span>
-                <span className={classNames('data-value', 'value-red', 'value-bold')}>{values.temp1} °C</span>
-            </div>
-
-            <div className="data-row">
-                <span className="data-label">TEMP LOCAL2</span>
-                <span className={classNames('data-value', 'value-red', 'value-bold')}>{values.temp2} °C</span>
-            </div>
+            {/* Show temperature rows only for ctm01 */}
+            {username === 'ctm01' && (
+                <>
+                    <div className="data-row">
+                        <span className="data-label">TEMP LOCAL1</span>
+                        <span className={classNames('data-value', 'value-red', 'value-bold')}>
+                            {values.temp1} °C
+                        </span>
+                    </div>
+                    <div className="data-row">
+                        <span className="data-label">TEMP LOCAL2</span>
+                        <span className={classNames('data-value', 'value-red', 'value-bold')}>
+                            0 °C
+                        </span>
+                    </div>
+                </>
+            )}
         </div>
     );
 };

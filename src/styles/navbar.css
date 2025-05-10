@@ -53,10 +53,6 @@
   .navbar-title {
     font-size: 1rem;
   }
-  .navbar-logo {
-    width: 18px;
-    height: 18px;
-  }
 }
 
 @media (max-width: 600px) {

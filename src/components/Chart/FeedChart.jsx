@@ -46,6 +46,12 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
     return data.filter((_, index) => index % factor === 0);
   };
 
+  const downsampleBarData = (data, maxBars) => {
+    if (data.length <= maxBars) return data;
+    const factor = Math.ceil(data.length / maxBars);
+    return data.filter((_, index) => index % factor === 0);
+  };
+
   const handleChartTypeChange = (type) => setChartType(type);
 
   const calculateStats = () => {
@@ -142,11 +148,13 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
             ? d.data.filter(point => Array.isArray(point) && point.length === 2 && typeof point[0] === 'number' && typeof point[1] === 'number')
             : [];
 
-         //console.log('dashboards-Feeds');
+          //console.log('dashboards-Feeds');
           const filteredData = filterDataByTimeRange(validData);
           //console.log(filteredData)
 
-          const downsampledData = downsampleData(filteredData, 1000);
+          const downsampledData = chartType === 'bar'
+            ? downsampleBarData(filteredData, 70)  // Show fewer points for bar charts
+            : downsampleData(filteredData, 1000);  // Keep existing behavior for other charts
 
           const formattedData = downsampledData.map(point => ({
             x: point[0],
@@ -164,7 +172,7 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
             borderWidth: 0.9,
             spanGaps: true,
             tension: 0.3,
-            fill: true,
+            fill: false,
             pointRadius: 0,
             pointHoverRadius: 6,
           };
@@ -177,6 +185,8 @@ const FeedChart = ({ data, feedName, timeRange, isTimeRangeAppear = true, isFrom
                 borderRadius: { topLeft: 8, topRight: 8 },
                 borderWidth: 1,
                 borderSkipped: false,
+                barPercentage: 0.8, // Controls width of bars within category
+                categoryPercentage: 0.9, // Controls space between groups
               };
               break;
             default:

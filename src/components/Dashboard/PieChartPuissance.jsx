@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 import '../../styles/PieChartPuissance.css';
 import { parse } from 'date-fns';
+import { getDashboardType } from '../../services/emonAPI';
 
 const PieChartPuissance = () => {
     const [isDarkMode, setIsDarkMode] = useState(
@@ -31,7 +32,9 @@ const PieChartPuissance = () => {
 
     useEffect(() => {
         const getLastValues = () => {
-            const cacheKey = `dashboardData_1_MULTIPUISSANCES_1m`;
+            // Get dashboard type based on current user
+            const dashboardType = getDashboardType('multipuissance');
+            const cacheKey = `dashboardData_${dashboardType}_1m`;
             const cachedData = localStorage.getItem(cacheKey);
 
             if (cachedData) {
@@ -39,8 +42,12 @@ const PieChartPuissance = () => {
                     const parsedData = JSON.parse(cachedData);
 
                     if (parsedData?.datasets && Array.isArray(parsedData.datasets)) {
+                        // Update the filter to work with both naming conventions
                         const powerData = parsedData.datasets
-                            .filter(dataset => dataset.label.startsWith('P_PH'))
+                            .filter(dataset =>
+                                dataset.label.startsWith('P_PH') || // for ctm01
+                                dataset.label.match(/^P[1-3]$/)    // for nfis01
+                            )
                             .slice(0, 3);
 
                         const values = powerData.map(dataset => getLastValidValue(dataset));

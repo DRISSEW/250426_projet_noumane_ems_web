@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 import '../../styles/PieChartPuissance.css';
+import { getDashboardType } from '../../services/emonAPI';
 
 const PieChartMulticourant = () => {
     const [currentValues, setCurrentValues] = useState([0, 0, 0]);
-     const [isDarkMode, setIsDarkMode] = useState(
+    const [isDarkMode, setIsDarkMode] = useState(
         document.documentElement.getAttribute('data-theme') === 'dark'
     );
 
@@ -18,24 +19,34 @@ const PieChartMulticourant = () => {
 
     useEffect(() => {
         const getLastValues = () => {
-            const cacheKey = `dashboardData_2_MULTICOURANTS_1m`;
+            const dashboardType = getDashboardType('multicourants');
+            const cacheKey = `dashboardData_${dashboardType}_1m`;
             const cachedData = localStorage.getItem(cacheKey);
+            const username = localStorage.getItem('username');
 
             if (cachedData) {
                 try {
                     const parsedData = JSON.parse(cachedData);
                     console.log('Raw parsed data:', parsedData);
-                    
+
                     if (parsedData?.datasets && Array.isArray(parsedData.datasets)) {
-                        // Filter and sort datasets for I1, I2, I3
+                        // Filter and sort datasets based on user account
                         const currentData = parsedData.datasets
                             .filter(dataset => {
                                 const label = dataset.label.toLowerCase();
-                                return (label === 'i1' || label === 'i2' || label === 'i3') && 
-                                       !label.includes('inst');
+                                if (username === 'nfis01') {
+                                    return (label === 'i1' || label === 'i2' || label === 'i3') ||
+                                        (label === 'i1' || label === 'i2' || label === 'i3');
+                                } else {
+                                    // Default ctm01 behavior
+                                    return (label === 'i1' || label === 'i2' || label === 'i3') &&
+                                        !label.includes('inst');
+                                }
                             })
                             .sort((a, b) => {
-                                const order = { 'i1': 0, 'i2': 1, 'i3': 2 };
+                                const order = username === 'nfis01'
+                                    ? { 'i1': 0, 'i2': 1, 'i3': 2 }
+                                    : { 'i1': 0, 'i2': 1, 'i3': 2 };
                                 return order[a.label.toLowerCase()] - order[b.label.toLowerCase()];
                             });
 
@@ -45,15 +56,15 @@ const PieChartMulticourant = () => {
                         const values = currentData.map(dataset => {
                             const dataPoints = dataset.data || [];
                             console.log(`Processing ${dataset.label} with ${dataPoints.length} points`);
-                            
+
                             // Find the last valid data point
                             const validPoint = [...dataPoints]
                                 .reverse()
                                 .find(point => {
-                                    const isValid = Array.isArray(point) && 
-                                                  point.length >= 2 && 
-                                                  !isNaN(point[1]) && 
-                                                  point[1] !== null;
+                                    const isValid = Array.isArray(point) &&
+                                        point.length >= 2 &&
+                                        !isNaN(point[1]) &&
+                                        point[1] !== null;
                                     if (!isValid) {
                                         console.log(`Invalid point in ${dataset.label}:`, point);
                                     }
@@ -159,7 +170,7 @@ const PieChartMulticourant = () => {
             }
         }
     };
-    
+
     return (
         <div className="pie-chart-container">
             <Pie data={pieData} options={options} />

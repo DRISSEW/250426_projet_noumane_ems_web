@@ -14,6 +14,7 @@ const API_KEYS = {
   }
 };
 
+console.log(localStorage.getItem('username'))
 // Create a function to get current API keys
 const getCurrentApiKeys = () => {
   const username = localStorage.getItem('username');
@@ -147,11 +148,151 @@ export const getFeedData = async (feedId, timeRange, intervaldefined, skipmissin
   }
 };
 
-// Function to fetch data for specific dashboard types
-export const getDashboardTypeData = async (dashboardType, timeRange) => {
+// Add dashboard type mapping
+const DASHBOARD_TYPE_MAPPING = {
+  ctm01: {
+    multipuissance: '1_MULTIPUISSANCES',
+    multicourants: '2_MULTICOURANTS',
+    equilibrage: '3_EQUILIBRAGE',
+    temperature: '4_TEMPERATURE',
+    consommation: '5_CONSOMMATION',
+    multigrandeurs: '6_MULTIGRANDEURS',
+    modules: '7_14 MODULES',
+    currentDetection: '8_CurrentDetection',
+    multidebit: '9_MULTIDEBIT',
+    eau: 'A10_EAU EW'
+  },
+  nfis01: {
+    multipuissance: '1-MULTI-PUISSANCE',
+    multicourants: '2-MULTI-COURANT',
+    equilibrage: '3-EQUILIBRAGE',
+    temperature: '5-TEMPERATURE',
+    consommation: '4-CONSOMMATION',
+    multigrandeurs: '6-MULTIGRANDEURS',
+  }
+};
+
+// Update the mapping to include feed IDs per user
+const FEED_CONFIG = {
+  ctm01: {
+    feeds: {
+      phase1Power: { name: 'P_PH1', id: 24 },
+      phase2Power: { name: 'P_PH2', id: 25 },
+      phase3Power: { name: 'P_PH3', id: 26 },
+      totalPower: { name: 'P_TOTALE', id: 27 },
+      current1: { name: 'i1', id: 149 },
+      current2: { name: 'i2', id: 150 },
+      current3: { name: 'i3', id: 151 },
+      tension: { name: 'TENSION', id: 28 }
+    }
+  },
+  nfis01: {
+    feeds: {
+      phase1Power: { name: 'P1', id: 1235 },
+      phase2Power: { name: 'P2', id: 1236 },
+      phase3Power: { name: 'P3', id: 1237 },
+      totalPower: { name: 'PT', id: 1238 },
+      current1: { name: 'I1', id: 1241 },
+      current2: { name: 'I2', id: 1242 },
+      current3: { name: 'I3', id: 1243 },
+      tension: { name: 'TENSION', id: 1240 }
+    }
+  }
+};
+
+// Update helper functions to use new configuration
+export const getFeedConfig = (genericName) => {
+  const username = localStorage.getItem('username');
+  const userConfig = FEED_CONFIG[username] || FEED_CONFIG.ctm01;
+  return userConfig.feeds[genericName];
+};
+
+// Add feed name mapping
+const FEED_NAME_MAPPING = {
+  ctm01: {
+    phase1Power: 'P_PH1',
+    phase2Power: 'P_PH2',
+    phase3Power: 'P_PH3',
+    totalPower: 'P_TOTALE',
+    current1: 'i1',
+    current2: 'i2',
+    current3: 'i3'
+  },
+  nfis01: {
+    phase1Power: 'P1',
+    phase2Power: 'P2',
+    phase3Power: 'P3',
+    totalPower: 'PT',
+    current1: 'I1',
+    current2: 'I2',
+    current3: 'I3'
+  }
+};
+
+// Function to get current user's dashboard type
+export const getDashboardType = (genericType) => {
+  const username = localStorage.getItem('username');
+  const userMapping = DASHBOARD_TYPE_MAPPING[username] || DASHBOARD_TYPE_MAPPING.ctm01;
+  return userMapping[genericType];
+};
+
+// Function to get current user's feed names
+const getFeedName = (genericName) => {
+  const username = localStorage.getItem('username');
+  const userMapping = FEED_NAME_MAPPING[username] || FEED_NAME_MAPPING.ctm01;
+  return userMapping[genericName];
+};
+
+// Update dashboardConfigs to use dynamic feed names
+const getDashboardConfig = () => {
+  return {
+    [getDashboardType('multipuissance')]: {
+      title: 'Multi-Phase Power Consumption',
+      feeds: [
+        {
+          ...getFeedConfig('phase1Power'),
+          color: { border: 'rgb(255, 99, 132)', background: 'rgba(255, 99, 132, 0.1)' }
+        },
+        {
+          ...getFeedConfig('phase2Power'),
+          color: { border: 'rgb(54, 162, 235)', background: 'rgba(54, 162, 235, 0.1)' }
+        },
+        {
+          ...getFeedConfig('phase3Power'),
+          color: { border: 'rgb(75, 192, 192)', background: 'rgba(75, 192, 192, 0.1)' }
+        },
+        {
+          ...getFeedConfig('totalPower'),
+          color: { border: 'rgb(153, 102, 255)', background: 'rgba(153, 102, 255, 0.1)' }
+        }
+      ]
+    },
+    [getDashboardType('multicourants')]: {
+      title: 'Multi-Phase Current',
+      feeds: [
+        {
+          ...getFeedConfig('current1'),
+          color: { border: 'rgb(255, 159, 64)', background: 'rgba(255, 159, 64, 0.1)' }
+        },
+        {
+          ...getFeedConfig('current2'),
+          color: { border: 'rgb(75, 192, 192)', background: 'rgba(75, 192, 192, 0.1)' }
+        },
+        {
+          ...getFeedConfig('current3'),
+          color: { border: 'rgb(54, 162, 235)', background: 'rgba(54, 162, 235, 0.1)' }
+        }
+      ]
+    },
+
+  };
+};
+
+// Update getDashboardTypeData to use dynamic configuration
+export const getDashboardTypeData = async (type, timeRange) => {
   try {
-    const cacheKey = `dashboardData_${dashboardType}_${timeRange}`;
-    const cacheTTLKey = `dashboardDataTTL_${dashboardType}_${timeRange}`;
+    const cacheKey = `dashboardData_${type}_${timeRange}`;
+    const cacheTTLKey = `dashboardDataTTL_${type}_${timeRange}`;
     const cacheTTL = 2 * 60 * 60 * 1000;//15 minutes in milliseconds
 
     // Check if data exists in localStorage and is still valid
@@ -192,59 +333,10 @@ export const getDashboardTypeData = async (dashboardType, timeRange) => {
     const start = (now - duration) * 1000; // also in milliseconds
 
     // Dashboard configurations mapped to API names
-    const dashboardConfigs = {
-      '1_MULTIPUISSANCES' : {
-        title: 'Multi-Phase Power Consumption',
-        feeds: [
-          {
-            id: 24,
-            name: 'P_PH1',
-            color: { border: 'rgb(255, 99, 132)', background: 'rgba(255, 99, 132, 0.1)' }
-          },
-          {
-            id: 25,
-            name: 'P_PH2',
-            color: { border: 'rgb(54, 162, 235)', background: 'rgba(54, 162, 235, 0.1)' }
-          },
-          {
-            id: 26,
-            name: 'P_PH3',
-            color: { border: 'rgb(75, 192, 192)', background: 'rgba(75, 192, 192, 0.1)' }
-          },
-          {
-            id: 27,
-            name: 'P_TOTALE',
-            color: { border: 'rgb(153, 102, 255)', background: 'rgba(153, 102, 255, 0.1)' }
-          }
-        ]
-      },
-      '2_MULTICOURANTS': {
-        title: 'Multi-Phase Current',
-        feeds: [
-          {
-            id: 149,
-            name: 'i1',
-            color: { border: 'rgb(255, 159, 64)', background: 'rgba(255, 159, 64, 0.1)' }
-          },
-          {
-            id: 150,
-            name: 'i2',
-            color: { border: 'rgb(75, 192, 192)', background: 'rgba(75, 192, 192, 0.1)' }
-          },
-          {
-            id: 151,
-            name: 'i3',
-            color: { border: 'rgb(54, 162, 235)', background: 'rgba(54, 162, 235, 0.1)' }
-          }
-        ]
-      },
-
-    };
-
-    // Use the dashboardType directly to fetch the correct configuration
-    const config = dashboardConfigs[dashboardType];
+    const dashboardConfigs = getDashboardConfig();
+    const config = dashboardConfigs[type];
     if (!config) {
-      throw new Error(`Unknown dashboard type: ${dashboardType}`);
+      throw new Error(`Unknown dashboard type: ${type}`);
     }
 
     // Fetch data for all feeds in parallel
@@ -303,7 +395,7 @@ export const getDashboardTypeData = async (dashboardType, timeRange) => {
 
     const dashboardData = {
       title: config.title,
-      type: dashboardType,
+      type: type,
       datasets: datasets,
     };
 
@@ -315,7 +407,7 @@ export const getDashboardTypeData = async (dashboardType, timeRange) => {
   } catch (error) {
     console.error('Error in getDashboardTypeData:', error);
     return {
-      type: dashboardType,
+      type: type,
       datasets: [],
       options: {}
     };
