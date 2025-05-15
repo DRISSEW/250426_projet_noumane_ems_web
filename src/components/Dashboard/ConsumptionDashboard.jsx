@@ -5,6 +5,8 @@ import { Pie } from 'react-chartjs-2';
 import { useTranslation } from 'react-i18next';
 import '../../styles/ConsumptionDashboard.css';
 import i18n from '../../i18n';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const CONSUMPTION_CONFIGS = {
     ctm01: {
@@ -20,6 +22,7 @@ const CONSUMPTION_CONFIGS = {
 const ConsumptionDashboard = () => {
     const { t } = useTranslation();
     const [consumptionData, setConsumptionData] = useState([]);
+    const [isExporting, setIsExporting] = useState(false);
 
     const [stats, setStats] = useState({
         dailyAvg: 0,
@@ -73,7 +76,7 @@ const ConsumptionDashboard = () => {
 
                 if (!months[monthKey]) {
                     months[monthKey] = {
-                        totalKWh: 0,      
+                        totalKWh: 0,
                         days: 0,
                         readings: []
                     };
@@ -145,8 +148,65 @@ const ConsumptionDashboard = () => {
         }
     });
 
+    const generatePDF = async () => {
+        try {
+            const element = document.querySelector('.consumption-dashboard');
+            const canvas = await html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                logging: false
+            });
+
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const imageWidth = pageWidth - 20;
+            const imageHeight = (canvas.height * imageWidth) / canvas.width;
+
+            // Add title
+            pdf.setFontSize(16);
+            pdf.text(
+                `${t('consumption.reportTitle')} - ${username}`,
+                pageWidth / 2,
+                15,
+                { align: 'center' }
+            );
+
+            // Add timestamp
+            pdf.setFontSize(10);
+            pdf.text(
+                `${t('consumption.generatedOn')}: ${new Date().toLocaleDateString(i18n.language)}`,
+                pageWidth / 2,
+                22,
+                { align: 'center' }
+            );
+
+            // Add dashboard content
+            const imageData = canvas.toDataURL('image/png');
+            pdf.addImage(imageData, 'PNG', 10, 30, imageWidth, imageHeight);
+
+            // Save PDF
+            await pdf.save(`consumption-report-${username}-${new Date().toISOString().split('T')[0]}.pdf`);
+        } catch (error) {
+            console.error('PDF generation error:', error);
+            alert(t('consumption.exportError'));
+        } finally {
+        }
+    };
+
     return (
         <div className="consumption-dashboard">
+            <div className="export-button-container">
+                <button
+                    onClick={generatePDF}
+                    className={`export-pdf-button ${isExporting ? 'loading' : ''}`}
+                    disabled={isExporting}
+                >
+                    <span className="button-content">
+                        {t('consumption.exportPDF')}
+                    </span>
+                </button>
+            </div>
             <div className="stats-container">
                 <div className="stat-card">
                     <h3>{t('consumption.dailyAverage')}</h3>

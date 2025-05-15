@@ -82,7 +82,11 @@
         "charts": {
             "monthlyConsumption": "Consommation Mensuelle (kWh)",
             "monthlyCost": "Coût Mensuel (DH)"
-        }
+        },
+        "exportPDF": "Exporter PDF",
+        "reportTitle": "Rapport du Tableau de Bord de Consommation",
+        "generatedOn": "Généré le",
+        "exportError": "Erreur lors de l'export du PDF"
     },
     "login": {
         "title": "Connexion",

@@ -82,7 +82,10 @@
         "charts": {
             "monthlyConsumption": "Monthly Consumption (kWh)",
             "monthlyCost": "Monthly Cost (DH)"
-        }
+        },
+        "exportPDF": "Export PDF",
+        "reportTitle": "Consumption Dashboard Report",
+        "generatedOn": "Generated on"
     },
     "login": {
         "title": "Login",
