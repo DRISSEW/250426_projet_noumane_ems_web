@@ -1,0 +1,94 @@
+.equilibrage-container {
+    padding: 20px;
+    background: var(--background-paper);
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.current-boxes {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: 300px;
+    gap: 15px;
+    padding: 0 10px;
+}
+
+.current-box {
+    position: relative;
+    width: 100px;
+    height: 250px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.current-box-negative{
+    padding-left: 6px;
+    padding-right: 6px;
+}
+.current-label {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--text-primary);
+    z-index: 1;
+}
+
+.current-value {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--text-primary);
+    z-index: 1;
+}
+
+.current-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--primary-color);
+    transition: height 0.3s ease-in-out;
+}
+
+[data-theme='dark'] .equilibrage-container {
+    background: var(--background-paper-dark);
+}
+
+[data-theme='dark'] .current-box {
+    border-color: var(--border-color-dark);
+}
+
+[data-theme='dark'] .current-label,
+[data-theme='dark'] .current-value {
+    color: var(--text-primary-dark);
+}
+
+.modules-dashboard-container {
+    padding: 20px;
+}
+
+.modules-dashboard-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+    .current-boxes {
+        flex-wrap: wrap;
+        height: auto;
+    }
+
+    .current-box {
+        height: 200px;
+    }
+}

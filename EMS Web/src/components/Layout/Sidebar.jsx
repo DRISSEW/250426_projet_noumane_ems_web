@@ -1,66 +1,57 @@
-import {Dashboard as DashboardIcon,
-  Settings as SettingsIcon,
-  ExitToApp as LogoutIcon,
-  Add as ExtrasIcon,
-  Schedule as ScheduleIcon,
-  Event as EventIcon,
-  BarChart as VisualizationIcon,
-  Email as EmailIcon,
-  Input as InputIcon,
-  Storage as FeedsIcon,
-  ShowChart as GraphsIcon,
-  ExpandLess,
-  ExpandMore,
-} from '@mui/icons-material';
-import { useState } from 'react';
+import {Dashboard as DashboardIcon,ExitToApp as LogoutIcon,Storage as FeedsIcon,} from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const [extrasOpen, setExtrasOpen] = useState(false);
-  const [setupOpen, setSetupOpen] = useState(false);
+  const { t } = useTranslation();
 
   const handleLogout = () => {
-    // Remove authentication status from localStorage
-    localStorage.removeItem('isAuthenticated');
-    // Redirect to login page
-    window.location.href = '/login'; // Using window.location to force a full page reload
+    const keysToKeep = ['theme'];
+
+    const keys = Object.keys(localStorage);
+
+    keys.forEach(key => {
+      if (!keysToKeep.includes(key)) {
+        localStorage.removeItem(key);
+      }
+    });
+
+    window.location.href = '/login';
   };
 
   const setupItems = [
-    { text: 'Inputs', icon: <InputIcon />, path: '/setup/inputs' },
-    { text: 'Feeds', icon: <FeedsIcon />, path: '/setup/feeds' },
-    { text: 'Dashboards', icon: <DashboardIcon />, path: '/dashboard' },
+    { text: 'feeds', icon: <FeedsIcon />, path: '/setup/feeds' },
+    { text: 'dashboards', icon: <DashboardIcon />, path: '/dashboard' },
   ];
 
   return (
     <div className="sidebar">
       <div className="sidebar-section">
-
         <div className="sidebar-group">
-            <div className="sidebar-submenu">
-              {setupItems.map((item) => (
-                <button
-                  key={item.text}
-                  className="sidebar-item submenu-item"
-                  onClick={() => navigate(item.path)}
-                >
-                  {item.icon}
-                  <span>{item.text}</span>
-                </button>
-              ))}
-            </div>
+          <div className="sidebar-submenu">
+            {setupItems.map((item) => (
+              <button
+                key={item.text}
+                className="sidebar-item submenu-item"
+                onClick={() => navigate(item.path)}
+              >
+                {item.icon}
+                <span>{t(item.text)}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
       <div className="sidebar-footer">
         <button className="sidebar-item" onClick={handleLogout}>
           <LogoutIcon />
-          <span>Logout</span>
+          <span>{t('logout')}</span>
         </button>
       </div>
     </div>
   );
 };
 
-export default Sidebar; 
+export default Sidebar;

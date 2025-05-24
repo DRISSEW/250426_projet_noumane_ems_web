@@ -1,0 +1,103 @@
+{
+    "logo": "Logo",
+    "selectDashboard": "Select Dashboard",
+    "switchToLight": "Switch to Light Mode",
+    "switchToDark": "Switch to Dark Mode",
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "feeds": "Feeds",
+    "dashboards": "Dashboards",
+    "logout": "Logout",
+    "FeedsByNodes": "Feeds by Nodes",
+    "Loading": "Loading",
+    "noFeedsFound": "No feeds found",
+    "searchPlaceholder": "Search for a feed...",
+    "value": "Value",
+    "na": "N/A",
+    "updated": "Updated",
+    "type": "Type",
+    "process": "Process",
+    "loadingChart": "Loading chart...",
+    "noDataAvailable": "No data available for this feed",
+    "selectFeedToView": "Select a feed to view its chart",
+    "justNow": "Just now",
+    "secondsAgo": "seconds ago",
+    "minuteAgo": "minute ago",
+    "minutesAgo": "minutes ago",
+    "hourAgo": "hour ago",
+    "hoursAgo": "hours ago",
+    "never": "Never",
+    "goBack": "Go Back",
+    "personalInformation": "Personal Information",
+    "username": "Username",
+    "email": "Email",
+    "notAvailable": "N/A",
+    "loadingDashboards": "Loading dashboards...",
+    "failedLoadDashboards": "Failed to load dashboards",
+    "noDashboardData": "No data available for this dashboard",
+    "loadingDashboard": "Loading dashboard...",
+    "failedLoadData": "Failed to load data for dashboard: ",
+    "viewDetails": "See",
+    "timeRanges": {
+        "24h": "D",
+        "1w": "W",
+        "1m": "M",
+        "y": "Y",
+        "5y": "5Y",
+        "10y": "10Y"
+    },
+    "chartStats": {
+        "average": "Average",
+        "minimum": "Minimum",
+        "maximum": "Maximum",
+        "total": "Total"
+    },
+    "exportCSV": "Export as CSV",
+    "pieCharts": {
+        "current": {
+            "title": "Current Distribution",
+            "current1": "Current 1",
+            "current2": "Current 2",
+            "current3": "Current 3",
+            "unit": "A"
+        },
+        "power": {
+            "title": "Power Distribution",
+            "phase1": "Phase 1",
+            "phase2": "Phase 2",
+            "phase3": "Phase 3",
+            "unit": "kW"
+        }
+    },
+    "consumption": {
+        "dailyAverage": "Daily Average",
+        "monthlyAverage": "Monthly Average",
+        "yearlyTotal": "Yearly Total",
+        "monthlyBreakdown": "Monthly Breakdown",
+        "month": "Month",
+        "consumption": "Consumption (kWh)",
+        "cost": "Cost (DH)",
+        "charts": {
+            "monthlyConsumption": "Monthly Consumption (kWh)",
+            "monthlyCost": "Monthly Cost (DH)"
+        },
+        "exportPDF": "Export PDF",
+        "reportTitle": "Consumption Dashboard Report",
+        "generatedOn": "Generated on"
+    },
+    "login": {
+        "title": "Login",
+        "username": "Username",
+        "password": "Password",
+        "enterUsername": "Enter your username",
+        "enterPassword": "Enter your password",
+        "loginButton": "Login",
+        "loggingIn": "Logging in...",
+        "noAccount": "Don't have an account?",
+        "registerHere": "Register here",
+        "invalidCredentials": "Invalid credentials",
+        "serverError": "Failed to connect to the server"
+    }
+}

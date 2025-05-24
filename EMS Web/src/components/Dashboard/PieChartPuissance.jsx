@@ -1,32 +1,55 @@
 import React, { useEffect, useState } from 'react';
 import { Pie } from 'react-chartjs-2';
 import '../../styles/PieChartPuissance.css';
+import { getDashboardType } from '../../services/emonAPI';
+import { useTranslation } from 'react-i18next';
 
 const PieChartPuissance = () => {
+    const [isDarkMode, setIsDarkMode] = useState(
+        document.documentElement.getAttribute('data-theme') === 'dark'
+    );
+
     const [phaseValues, setPhaseValues] = useState([0, 0, 0]);
+    const { t } = useTranslation();
+
+    useEffect(() => {
+        const observer = new MutationObserver(() => {
+            setIsDarkMode(document.documentElement.getAttribute('data-theme') === 'dark');
+        });
+        observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+        return () => observer.disconnect();
+    }, []);
+
+    const getLastValidValue = (dataset) => {
+        for (let i = dataset.data.length - 1; i >= 0; i--) {
+            const point = dataset.data[i];
+            if (point && Array.isArray(point) && point[1] !== null) {
+                return point[1];
+            }
+        }
+        return 0; 
+    };
 
     useEffect(() => {
         const getLastValues = () => {
-            const cacheKey = `dashboardData_1_MULTIPUISSANCES_1m`;
+            const dashboardType = getDashboardType('multipuissance');
+            const cacheKey = `dashboardData_${dashboardType}_1m`;
             const cachedData = localStorage.getItem(cacheKey);
 
             if (cachedData) {
                 try {
                     const parsedData = JSON.parse(cachedData);
 
-                    // Ensure we have datasets and they contain data
                     if (parsedData?.datasets && Array.isArray(parsedData.datasets)) {
-                        // Get only P_PH1, P_PH2, and P_PH3 data
                         const powerData = parsedData.datasets
-                            .filter(dataset => dataset.label.startsWith('P_PH'))
+                            .filter(dataset =>
+                                dataset.label.startsWith('P_PH') || 
+                                dataset.label.match(/^P[1-3]$/)   
+                            )
                             .slice(0, 3);
 
-                        const values = powerData.map(dataset => {
-                            const lastPoint = dataset.data[dataset.data.length - 1];
-                            return lastPoint && Array.isArray(lastPoint) ? lastPoint[1] : 0;
-                        });
+                        const values = powerData.map(dataset => getLastValidValue(dataset));
 
-                        // Only update if we have valid values
                         if (values.length === 3 && values.some(v => v !== 0)) {
                             setPhaseValues(values);
                         }
@@ -40,8 +63,13 @@ const PieChartPuissance = () => {
         getLastValues();
     }, []);
 
+
     const pieData = {
-        labels: ['Phase 1', 'Phase 2', 'Phase 3'],
+        labels: [
+            t('pieCharts.power.phase1'),
+            t('pieCharts.power.phase2'),
+            t('pieCharts.power.phase3')
+        ],
         datasets: [
             {
                 data: phaseValues,
@@ -67,7 +95,7 @@ const PieChartPuissance = () => {
             legend: {
                 position: 'bottom',
                 labels: {
-                    color: '#333',  // Default dark color
+                    color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : '#333',
                     font: {
                         size: 12,
                         weight: '600'
@@ -79,8 +107,8 @@ const PieChartPuissance = () => {
             },
             title: {
                 display: true,
-                text: 'Distribution des Puissances',
-                color: '#333',  // Default dark color
+                text: t('pieCharts.power.title'),
+                color: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : '#333',
                 font: {
                     size: 16,
                     weight: 'bold',
@@ -89,9 +117,9 @@ const PieChartPuissance = () => {
                 padding: 20
             },
             tooltip: {
-                backgroundColor: '#fff',
-                titleColor: '#333',
-                bodyColor: '#666',
+                backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : '#fff',
+                titleColor: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : '#333',
+                bodyColor: isDarkMode ? 'rgba(255, 255, 255, 0.9)' : '#666',
                 bodyFont: {
                     size: 13
                 },
@@ -102,13 +130,12 @@ const PieChartPuissance = () => {
                         const value = context.raw;
                         const total = context.dataset.data.reduce((a, b) => a + b, 0);
                         const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                        return `${context.label}: ${value.toFixed(2)}kW (${percentage}%)`;
+                        return `${context.label}: ${value.toFixed(2)}${t('pieCharts.power.unit')} (${percentage}%)`;
                     }
                 }
             }
         }
     };
-
     return (
         <div className="pie-chart-container">
             <Pie data={pieData} options={options} />

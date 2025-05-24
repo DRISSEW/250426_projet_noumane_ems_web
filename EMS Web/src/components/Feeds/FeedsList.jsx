@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { getFeedsList, getFeedData } from '../../services/emonAPI';
 import FeedChart from '../Chart/FeedChart';
 import '../../styles/FeedsList.css';
+import { useTranslation } from 'react-i18next';
+
 
 const FeedsList = () => {
   const [feeds, setFeeds] = useState([]);
@@ -11,14 +13,17 @@ const FeedsList = () => {
   const [error, setError] = useState(null);
   const [selectedFeed, setSelectedFeed] = useState(null);
   const [timeRange, setTimeRange] = useState('1m');
-  const [searchTerm, setSearchTerm] = useState(''); // State for search input
-  const [filteredFeeds, setFilteredFeeds] = useState([]); // State for filtered feeds
+  const [searchTerm, setSearchTerm] = useState(''); 
+  const [filteredFeeds, setFilteredFeeds] = useState([]); 
+  const { t } = useTranslation();
 
   const timeRanges = {
-    '24h': 'D',
-    '1w': 'W',
-    '1m': 'M',
-    'y': 'Y',
+    '24h': t('timeRanges.24h'),
+    '1w': t('timeRanges.1w'),
+    '1m': t('timeRanges.1m'),
+    'y': t('timeRanges.y'),
+    '5y': t('timeRanges.5y'),
+    '10y': t('timeRanges.10y'),
   };
 
   useEffect(() => {
@@ -26,7 +31,7 @@ const FeedsList = () => {
       try {
         const data = await getFeedsList();
         setFeeds(data);
-        setFilteredFeeds(data); // Initialize filtered feeds
+        setFilteredFeeds(data); 
       } catch {
         setError('Failed to load feeds');
       } finally {
@@ -70,7 +75,7 @@ const FeedsList = () => {
   const handleFeedClick = async (feed, newTimeRange) => {
     try {
       setChartLoading(true);
-      const data = await getFeedData(feed.id, newTimeRange);
+      const data = await getFeedData(feed.id, newTimeRange || timeRange);
       if (data && Array.isArray(data) && data.length > 0) {
         setSelectedFeed({
           ...feed,
@@ -97,7 +102,6 @@ const FeedsList = () => {
     const term = e.target.value.toLowerCase();
     setSearchTerm(term);
 
-    // Filter feeds based on the search term
     const filtered = feeds.filter((feed) =>
       feed.name.toLowerCase().includes(term)
     );
@@ -106,13 +110,12 @@ const FeedsList = () => {
 
   const handleSearchKeyPress = (e) => {
     if (e.key === 'Enter' && filteredFeeds.length === 1) {
-      // Automatically show the chart for the single matching feed
       handleFeedClick(filteredFeeds[0]);
     }
   };
 
   if (loading) {
-    return <div className="feeds-loading">Loading...</div>;
+    return <div className="feeds-loading">{t('Loading')}...</div>;
   }
 
   if (error) {
@@ -121,24 +124,27 @@ const FeedsList = () => {
 
   return (
     <div className="feeds-container">
-      <h3 className="feeds-title">Feeds By Node</h3>
+      <div className="feeds-header">
+        <p className="feeds-title">{t('FeedsByNodes')}</p>
+        <div className="search-bar">
+          <input
+            type="text"
+            placeholder={t('searchPlaceholder')}
+            value={searchTerm}
+            onChange={handleSearch}
+            onKeyPress={handleSearchKeyPress}
+            className="search-input"
+            aria-label={t('searchPlaceholder')}
+          />
+        </div>
 
-      {/* Search Bar */}
-      <div className="search-bar">
-        <input
-          type="text"
-          placeholder="Search for a feed..."
-          value={searchTerm}
-          onChange={handleSearch}
-          className="search-input"
-        />
       </div>
 
       <div className="feeds-layout">
         <div className="feeds-sidebar">
           <div className="feeds-list">
             {Object.keys(groupedFeeds).length === 0 ? (
-              <div className="feeds-empty">No feeds found</div>
+              <div className="feeds-empty">{t('noFeedsFound')}</div>
             ) : (
               Object.entries(groupedFeeds).map(([node, feeds]) => (
                 <div key={node} className="feed-node">
@@ -167,20 +173,20 @@ const FeedsList = () => {
                             </div>
                             <div className="feed-item-details">
                               <span className={`feed-value ${!feed.value ? 'no-value' : ''}`}>
-                                Value: {feed.value || 'N/A'}
+                                {t('value')}: {feed.value || t('na')}
                                 {feed.unit && ` ${feed.unit}`}
                               </span>
                               <span className={`feed-update ${updateTime.isRecent ? 'recent' : ''}`}>
-                                Updated: {updateTime.text}
+                                {t('updated')}: {updateTime.text}
                               </span>
                               {feed.datatype && (
                                 <span className="feed-type">
-                                  Type: {feed.datatype}
+                                  {t('type')}: {feed.datatype}
                                 </span>
                               )}
                               {feed.processList && (
                                 <span className="feed-process">
-                                  Process: {feed.processList}
+                                  {t('process')}: {feed.processList}
                                 </span>
                               )}
                             </div>
@@ -215,7 +221,7 @@ const FeedsList = () => {
               </div>
 
               {chartLoading ? (
-                <div className="feeds-loading">Loading chart...</div>
+                <div className="feeds-loading">{t('loadingChart')}</div>
               ) : selectedFeed.chartData && selectedFeed.chartData.length > 0 ? (
                 <FeedChart
                   data={selectedFeed.chartData}
@@ -230,12 +236,12 @@ const FeedsList = () => {
                       d="M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z"
                     />
                   </svg>
-                  <span>No data available for this feed</span>
+                  <span>{t('noDataAvailable')}</span>
                 </div>
               )}
             </div>
           ) : (
-            <div className="no-chart-message">Select a feed to view its chart</div>
+            <div className="no-chart-message">{t('selectFeedToView')}</div>
           )}
         </div>
       </div>
